@@ -39,7 +39,7 @@ public class Fisher extends JFrame {
 
 	private void init() {
 		final Fisher f = this;
-		final JButton startButton = new JButton("����");
+		final JButton startButton = new JButton("start");
 		startButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -52,7 +52,7 @@ public class Fisher extends JFrame {
 						while (true) {
 							long now = new Date().getTime();
 							if (now - start > 10 * 60 * 1000) {
-								// �����
+								// 
 								start = now;
 								MyAction.keyPress1();
 							}
@@ -72,7 +72,7 @@ public class Fisher extends JFrame {
 			}
 		});
 
-		JButton positionButton = new JButton("��λ");
+		JButton positionButton = new JButton("pos");
 		positionButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

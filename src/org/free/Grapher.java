@@ -5,18 +5,23 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.imageio.ImageIO;
+
 public class Grapher {
+	static boolean debug = true;
 	static int left, top, width, height, base, size, currX, currY;
 	private static int offset_left = -35, offset_top = -10, offset_right = 0,
 			offset_bottom = 20, lightThreshold = 10, _lightThreshold = 10;
-	static int file_index = 0;
+	static int file_index = 0, dir_index = 0;
 	static int fail_count = 0;
 	static int all, succeed;
 	static double per;
+	static ArrayList<BufferedImage> img_list = new ArrayList<BufferedImage>();
 	static {
 		Dimension dim = MyAction.toolkit.getScreenSize();
 		width = dim.width - 1000;
@@ -35,6 +40,7 @@ public class Grapher {
 		long start = new Date().getTime();
 		Thread.sleep(4000);
 		System.out.println("=====");
+		boolean succ = false;
 		try {
 			Rectangle fisherPotRectangle = getFisherPot(MyAction.robot
 					.createScreenCapture(new Rectangle(left, top, width, height)));
@@ -49,15 +55,19 @@ public class Grapher {
 						fisherPotRectangle)) {
 					MyAction.rightClick(currX, currY);
 					succeed++;
+					succ = true;
 					break;
 				}
 			}
 		} finally {
+			if (!succ && debug)
+				saveFile();
 			all++;
 		}
 	}
 
 	private static Rectangle getFisherPot(BufferedImage img) throws IOException {
+		img_list.add(img);
 		long start = new Date().getTime();
 		ArrayList<Point> list = new ArrayList<Point>();
 		for (int x = 0; x < img.getWidth(); x++)
@@ -67,7 +77,6 @@ public class Grapher {
 				}
 			}
 		if (list.size() == 0) {
-			// ����Ưʧ�ܣ���ͼ
 			// saveFile(img);
 			if (fail_count++ > 100)
 				System.exit(0);
@@ -99,13 +108,11 @@ public class Grapher {
 		Rectangle rec = new Rectangle(_left, _top, _width, _height);
 		base = getRectangleLight(img, rec);
 
-		// ����ֵ��Ҫ�����꣬������Ļ��λ
 		rec.x += left;
 		rec.y += top;
 		System.out.println((new Date().getTime() - start) + " - " + base);
 
-		// ��Ȩ�ؽ��е���
-		if (_top > height / 2)
+		if (Conf.isDouble && _top > height / 2)
 			lightThreshold = _lightThreshold * 2;
 		return rec;
 	}
@@ -122,17 +129,16 @@ public class Grapher {
 			for (int y = rec.y; y < rec.y + rec.height; y++)
 				light += getRGB(img, x, y);
 
-		// // Ϊ���Խ�ͼ
-		// if (rec.x == 0)
-		// saveFile(img);
-		// else
-		// saveFile(img, rec);
+		if (rec.x == 0)
+			saveFile(img);
+		else
+			saveFile(img, rec);
 		return light / (rec.width * rec.height);
 	}
 
 	static boolean analysis1(BufferedImage img, Rectangle rec)
 			throws IOException {
-		// saveFile(img);
+		img_list.add(img);
 		int light = getRectangleLight(img);
 		if (light - base > 10)
 			System.out.println(light + "-" + base + "-" + (light - base));
@@ -160,24 +166,33 @@ public class Grapher {
 		return c.getRed() + c.getBlue() + c.getGreen();
 	}
 
-	// private static void saveFile(BufferedImage img) throws IOException {
-	// fail_count++;
-	// if (!new File("img").exists())
-	// new File("img").mkdir();
-	// while (true) {
-	// File f = new File("img/" + file_index++ + ".jpg");
-	// if (!f.exists()) {
-	// ImageIO.write(img, "jpg", f);
-	// break;
-	// }
-	// }
-	// }
-	//
-	// private static void saveFile(BufferedImage img, Rectangle rec)
-	// throws IOException {
-	// for (int i = rec.x; i < rec.x + rec.width; i++)
-	// for (int j = rec.y; j < rec.y + rec.height; j++)
-	// img.setRGB(i, j, 0);
-	// saveFile(img);
-	// }
+	static void saveFile(BufferedImage img) throws IOException {
+		fail_count++;
+		if (!new File("img").exists())
+			new File("img").mkdir();
+		if (!new File("img/" + dir_index).exists())
+			new File("img/" + dir_index).mkdir();
+		while (true) {
+			File f = new File("img/" + dir_index + "/" + file_index++ + ".jpg");
+			if (!f.exists()) {
+				ImageIO.write(img, "jpg", f);
+				break;
+			}
+		}		
+	}
+
+	static void saveFile(BufferedImage img, Rectangle rec) throws IOException {
+		for (int i = rec.x; i < rec.x + rec.width; i++)
+			for (int j = rec.y; j < rec.y + rec.height; j++)
+				img.setRGB(i, j, 0);
+		saveFile(img);
+	}
+
+	static void saveFile() throws IOException {
+		dir_index++;
+		for (BufferedImage bi : img_list) {
+			saveFile(bi);
+		}
+		img_list.clear();
+	}
 }
