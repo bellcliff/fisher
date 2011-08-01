@@ -16,6 +16,9 @@ public class Fisher extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	static Fisher instance;
+	static boolean autoClose = false;
+	static int autoCloseTime = 1000 * 60 * 6 * 25;
+
 	public static void main(String[] args) throws InterruptedException {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		new Fisher();
@@ -45,14 +48,23 @@ public class Fisher extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				running = true;
 				startButton.setEnabled(false);
+				final long _start = new Date().getTime();
 				new Thread() {
 					@Override
-					public void run() {
+					public void run() {						
 						long start = new Date().getTime();
+
+						//自动关机指令
+						if(autoClose && start - _start > autoCloseTime)
+							MyAction.closePC();
+						
+						//启动时上鱼饵
+						MyAction.keyPress1();
+						
 						while (true) {
 							long now = new Date().getTime();
 							if (now - start > 10 * 60 * 1000) {
-								// 
+								//
 								start = now;
 								MyAction.keyPress1();
 							}
@@ -61,7 +73,7 @@ public class Fisher extends JFrame {
 								g.run();
 							} catch (Exception e) {
 								e.printStackTrace();
-//								System.exit(0);
+								// System.exit(0);
 							}
 							f.setTitle(Grapher.all + " - " + Grapher.succeed);
 							if (!running)

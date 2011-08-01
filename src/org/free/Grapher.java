@@ -24,8 +24,8 @@ public class Grapher {
 	static ArrayList<BufferedImage> img_list = new ArrayList<BufferedImage>();
 	static {
 		Dimension dim = MyAction.toolkit.getScreenSize();
-		width = dim.width - 1000;
-		height = dim.height / 2;
+		width = dim.width - 800;
+		height = dim.height / 2 - 300;
 		top = 50;
 		left = (dim.width - width) / 2;
 
@@ -110,7 +110,7 @@ public class Grapher {
 
 		rec.x += left;
 		rec.y += top;
-		System.out.println((new Date().getTime() - start) + " - " + base);
+		// System.out.println((new Date().getTime() - start) + " - " + base);
 
 		if (Conf.isDouble && _top > height / 2)
 			lightThreshold = _lightThreshold * 2;
@@ -129,10 +129,10 @@ public class Grapher {
 			for (int y = rec.y; y < rec.y + rec.height; y++)
 				light += getRGB(img, x, y);
 
-		if (rec.x == 0)
-			saveFile(img);
-		else
-			saveFile(img, rec);
+		// if (rec.x == 0)
+		// saveFile(img);
+		// else
+		// saveFile(img, rec);
 		return light / (rec.width * rec.height);
 	}
 
@@ -178,7 +178,7 @@ public class Grapher {
 				ImageIO.write(img, "jpg", f);
 				break;
 			}
-		}		
+		}
 	}
 
 	static void saveFile(BufferedImage img, Rectangle rec) throws IOException {

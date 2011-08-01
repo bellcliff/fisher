@@ -5,6 +5,7 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 public class MyAction {
 	static Robot robot;
@@ -52,5 +53,17 @@ public class MyAction {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void closePC(){
+		try {
+			Runtime.getRuntime().exec("shutdown /i");
+		} catch (IOException e) {
+			System.exit(0);
+		}
+	}
+	
+	public static void main(String[] args) {
+		closePC();
 	}
 }
