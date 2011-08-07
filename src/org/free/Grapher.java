@@ -168,6 +168,9 @@ public class Grapher {
 
 	static void saveFile(BufferedImage img) throws IOException {
 		fail_count++;
+		if(true)
+			return;
+		file_index=0;
 		if (!new File("img").exists())
 			new File("img").mkdir();
 		if (!new File("img/" + dir_index).exists())

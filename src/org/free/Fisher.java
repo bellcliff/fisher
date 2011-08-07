@@ -1,14 +1,26 @@
 package org.free;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Date;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class Fisher extends JFrame {
 	/**
@@ -31,9 +43,9 @@ public class Fisher extends JFrame {
 
 	public Fisher() {
 		this.setAlwaysOnTop(true);
-		this.setBounds(10, 10, 240, 80);
+		this.setBounds(10, 10, 240, 100);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLayout(new GridLayout(1, 2));
+		this.setLayout(new GridLayout(2, 1));
 		this.init();
 		this.setVisible(true);
 		g = new Grapher();
@@ -42,6 +54,18 @@ public class Fisher extends JFrame {
 
 	private void init() {
 		final Fisher f = this;
+
+		final JPanel conPanel = new JPanel(new FlowLayout());
+		f.getContentPane().add(conPanel);
+		final JPanel confPanel = new JPanel(new FlowLayout());
+		f.getContentPane().add(confPanel);
+
+		addControl(conPanel);
+		addConf(confPanel);
+	}
+
+	private void addControl(JPanel conPanel) {
+		final Fisher f = this;
 		final JButton startButton = new JButton("start");
 		startButton.addActionListener(new ActionListener() {
 			@Override
@@ -49,21 +73,23 @@ public class Fisher extends JFrame {
 				running = true;
 				startButton.setEnabled(false);
 				final long _start = new Date().getTime();
+				MyAction.keyPress1();
 				new Thread() {
 					@Override
-					public void run() {						
+					public void run() {
 						long start = new Date().getTime();
 
-						//自动关机指令
-						if(autoClose && start - _start > autoCloseTime)
+						// 自动关机指令
+						if (autoClose && start - _start > autoCloseTime)
 							MyAction.closePC();
-						
-						//启动时上鱼饵
-						MyAction.keyPress1();
-						
+
+						// 启动时上鱼饵
+//						MyAction.keyPress1();
+
 						while (true) {
 							long now = new Date().getTime();
-							if (now - start > 10 * 60 * 1000) {
+							if (Conf.enBait
+									&& (now - start > Conf.inBait * 60 * 1000)) {
 								//
 								start = now;
 								MyAction.keyPress1();
@@ -116,9 +142,29 @@ public class Fisher extends JFrame {
 			}
 		});
 
-		this.getContentPane().add(startButton);
-		this.getContentPane().add(positionButton);
-		this.getContentPane().add(stopButton);
+		conPanel.add(startButton);
+		conPanel.add(positionButton);
+		conPanel.add(stopButton);
 	}
 
+	private void addConf(JPanel confPanel) {
+		final JCheckBox enBait = new JCheckBox("鱼饵");
+		final JTextField inBait = new JTextField(Conf.inBait);
+		enBait.setSelected(Conf.enBait);
+		inBait.setPreferredSize(new Dimension(50, 20));
+		if (Conf.enBait)
+			inBait.setText("" + Conf.inBait);
+		enBait.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Conf.enBait = enBait.isSelected();
+				if (Conf.enBait)
+					Conf.inBait = Integer.parseInt(inBait.getText().trim());
+			}
+		});
+
+		confPanel.add(enBait);
+		confPanel.add(inBait);
+	}
 }
