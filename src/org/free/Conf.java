@@ -10,7 +10,12 @@ public class Conf {
 	static boolean enBait = true;
 	
 	/**
-	 * 鱼饵持续时间
+	 * 鱼饵持续时间，单位分
 	 */
 	static int inBait = 15;
+	
+	/**
+	 * 时间间隔，单位秒
+	 */
+	static final int interval = 22;
 }

@@ -43,7 +43,7 @@ public class Grapher {
 					.createScreenCapture(new Rectangle(left, top, width, height)));
 			if (fisherPotRectangle == null)
 				return;
-			while (new Date().getTime() - start < 19000) {
+			while (new Date().getTime() - start < Conf.interval * 1000) {
 				Thread.sleep(200);
 				if (!Fisher.running)
 					break;
