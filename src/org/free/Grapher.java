@@ -65,10 +65,10 @@ public class Grapher {
 
 	private static Rectangle getFisherPot(BufferedImage img) throws IOException {
 		img_list.add(img);
-//		long start = new Date().getTime();
+		// long start = new Date().getTime();
 		ArrayList<Point> list = new ArrayList<Point>();
-		for (int x = 0; x < img.getWidth(); x++)
-			for (int y = 0; y < img.getHeight(); y++) {
+		for (int x = 0; x < img.getWidth() - size; x++)
+			for (int y = 0; y < img.getHeight() - size; y++) {
 				if (checkRed(img, x, y)) {
 					list.add(new Point(x, y));
 				}
@@ -164,22 +164,22 @@ public class Grapher {
 	}
 
 	static void saveFile(BufferedImage img) throws IOException {
-		
-//		fail_count++;
-////		if(true)
-////			return;
-////		file_index=0;
-//		if (!new File("img").exists())
-//			new File("img").mkdir();
-//		if (!new File("img/" + dir_index).exists())
-//			new File("img/" + dir_index).mkdir();
-//		while (true) {
-//			File f = new File("img/" + dir_index + "/" + file_index++ + ".jpg");
-//			if (!f.exists()) {
-//				ImageIO.write(img, "jpg", f);
-//				break;
-//			}
-//		}
+
+		// fail_count++;
+		// // if(true)
+		// // return;
+		// // file_index=0;
+		// if (!new File("img").exists())
+		// new File("img").mkdir();
+		// if (!new File("img/" + dir_index).exists())
+		// new File("img/" + dir_index).mkdir();
+		// while (true) {
+		// File f = new File("img/" + dir_index + "/" + file_index++ + ".jpg");
+		// if (!f.exists()) {
+		// ImageIO.write(img, "jpg", f);
+		// break;
+		// }
+		// }
 	}
 
 	static void saveFile(BufferedImage img, Rectangle rec) throws IOException {
