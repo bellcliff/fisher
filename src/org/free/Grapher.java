@@ -59,6 +59,8 @@ public class Grapher {
 		} finally {
 			if (!succ && debug)
 				saveFile();
+			if (img_list.size() > 10)
+				img_list.clear();
 			all++;
 		}
 	}
