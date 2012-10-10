@@ -192,6 +192,8 @@ public class Grapher {
 	}
 
 	static void saveFile() throws IOException {
+		if (!debug)
+			return;
 		dir_index++;
 		for (BufferedImage bi : img_list) {
 			saveFile(bi);
