@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Grapher {
-	static boolean debug = true;
+//	static boolean debug = true;
 	static int left, top, width, height, base, size, currX, currY;
 	private static int offset_left = -35, offset_top = -10, offset_right = 0,
 			offset_bottom = 20, lightThreshold = 10, _lightThreshold = 10;
@@ -57,7 +57,7 @@ public class Grapher {
 				}
 			}
 		} finally {
-			if (!succ && debug)
+			if (!succ)
 				saveFile();
 			if (img_list.size() > 10)
 				img_list.clear();
@@ -192,7 +192,7 @@ public class Grapher {
 	}
 
 	static void saveFile() throws IOException {
-		if (!debug)
+		if (!Conf.DEBUG)
 			return;
 		dir_index++;
 		for (BufferedImage bi : img_list) {

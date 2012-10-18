@@ -18,4 +18,6 @@ public class Conf {
 	 * 时间间隔，单位秒
 	 */
 	static final int interval = 22;
+	
+	static final boolean DEBUG = false;
 }
