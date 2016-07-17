@@ -1,6 +1,7 @@
 package org.free;
 
 import java.awt.AWTException;
+import java.awt.Dimension;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
@@ -22,9 +23,9 @@ public class MyAction {
 	public static void rightClick(int x, int y) throws InterruptedException {
 		robot.mouseMove(x, y);
 		Thread.sleep(100);
-		robot.mousePress(InputEvent.BUTTON3_MASK);
+		robot.mousePress(InputEvent.BUTTON1_MASK);
 		Thread.sleep(50);
-		robot.mouseRelease(InputEvent.BUTTON3_MASK);
+		robot.mouseRelease(InputEvent.BUTTON1_MASK);
 		Thread.sleep(2000);
 		robot.mouseMove(300, 10);
 	}
@@ -36,8 +37,8 @@ public class MyAction {
 			ex.printStackTrace();
 			return;
 		}
-		robot.keyPress(KeyEvent.VK_Z);
-		robot.keyRelease(KeyEvent.VK_Z);
+		robot.keyPress(KeyEvent.VK_E);
+		robot.keyRelease(KeyEvent.VK_E);
 	}
 	public static void keyPress1() {
 		try {
@@ -64,6 +65,9 @@ public class MyAction {
 	}
 	
 	public static void main(String[] args) {
-		closePC();
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		double width = screenSize.getWidth();
+		double height = screenSize.getHeight();
+		System.out.println(width + "-" + height);
 	}
 }
