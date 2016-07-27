@@ -1,19 +1,29 @@
 package org.free;
 
+import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Date;
+
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.TERMINATE;
 
 public class Grapher {
 //	static boolean debug = true;
 	static int left, top, width, height, base, size, currX, currY;
-	private static int offset_left = -35, offset_top = -10, offset_right = 0,
-			offset_bottom = 20, lightThreshold = 10, _lightThreshold = 10;
+	private static int offset_left = -10, offset_top = -10, offset_right = 10,
+			offset_bottom = 10, lightThreshold = 10, _lightThreshold = 6;
 	static int file_index = 0, dir_index = 0;
 	static int fail_count = 0;
 	static int all, succeed;
@@ -109,7 +119,6 @@ public class Grapher {
 
 		rec.x += left;
 		rec.y += top;
-		// System.out.println((new Date().getTime() - start) + " - " + base);
 
 		if (Conf.isDouble && _top > height / 2)
 			lightThreshold = _lightThreshold * 2;
@@ -139,8 +148,7 @@ public class Grapher {
 			throws IOException {
 		img_list.add(img);
 		int light = getRectangleLight(img);
-		if (light - base > 10)
-			System.out.println(light + "-" + base + "-" + (light - base));
+		System.out.println(light + "-" + base + "-" + (light - base));
 		if (light > base + lightThreshold) {
 			currX = rec.x + rec.width / 2;
 			currY = rec.y + rec.height / 2;
@@ -171,24 +179,17 @@ public class Grapher {
 		// // if(true)
 		// // return;
 		// // file_index=0;
-		// if (!new File("img").exists())
-		// new File("img").mkdir();
-		// if (!new File("img/" + dir_index).exists())
-		// new File("img/" + dir_index).mkdir();
-		// while (true) {
-		// File f = new File("img/" + dir_index + "/" + file_index++ + ".jpg");
-		// if (!f.exists()) {
-		// ImageIO.write(img, "jpg", f);
-		// break;
-		// }
-		// }
-	}
-
-	static void saveFile(BufferedImage img, Rectangle rec) throws IOException {
-		for (int i = rec.x; i < rec.x + rec.width; i++)
-			for (int j = rec.y; j < rec.y + rec.height; j++)
-				img.setRGB(i, j, 0);
-		saveFile(img);
+		if (!new File("img").exists())
+			 new File("img").mkdir();
+		if (!new File("img/" + dir_index).exists())
+			new File("img/" + dir_index).mkdir();
+		while (true) {
+			File f = new File("img/" + dir_index + "/" + file_index++ + ".jpg");
+			if (!f.exists()) {
+				ImageIO.write(img, "jpg", f);
+				break;
+			}
+		}
 	}
 
 	static void saveFile() throws IOException {
@@ -200,4 +201,30 @@ public class Grapher {
 		}
 		img_list.clear();
 	}
+
+	public static void deleteFileOrFolder(final Path path) throws IOException {
+		Files.walkFileTree(path, new SimpleFileVisitor<Path>(){
+			@Override public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
+					throws IOException {
+				Files.delete(file);
+				return CONTINUE;
+			}
+
+			@Override public FileVisitResult visitFileFailed(final Path file, final IOException e) {
+				return handleException(e);
+			}
+
+			private FileVisitResult handleException(final IOException e) {
+				e.printStackTrace(); // replace with more robust error handling
+				return TERMINATE;
+			}
+
+			@Override public FileVisitResult postVisitDirectory(final Path dir, final IOException e)
+					throws IOException {
+				if(e!=null)return handleException(e);
+				Files.delete(dir);
+				return CONTINUE;
+			}
+		});
+	};
 }
