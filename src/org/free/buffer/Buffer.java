@@ -1,59 +1,55 @@
-package org.free;
+package org.free.buffer;
+
+import org.free.MyAction;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by byang1 on 7/26/16.
- */
 public class Buffer {
-    int key;
-    long interval;
-    long startTime;
+    private int key;
+    private long interval;
+    private long startTime;
 
-    enum FishBuffer {
+    public enum FishBuffer {
         Bait,
-        Knife
+        Knife,
+        Special
     }
 
-    Buffer(int key, long interval) {
+    private Buffer(int key, long interval) {
         this.key = key;
         this.interval = interval;
         this.startTime = System.currentTimeMillis();
     }
 
-    void check() {
+    private void check() {
         if (System.currentTimeMillis() - startTime > interval) {
             MyAction.keyPress(this.key);
             this.startTime = System.currentTimeMillis();
         }
     }
 
-    static Buffer startBuffer(FishBuffer buffer){
+    private static Buffer startBuffer(FishBuffer buffer){
         switch (buffer){
             case Bait:
                 return new Bait();
             case Knife:
                 return new Knife();
+            case Special:
+                return new Special();
         }
         return null;
     }
 
-    static void checkBuffer(){
-
-    }
-
-    static class BufferManagement{
+    public static class BufferManagement{
         List<Buffer> buffers = new ArrayList<>();
-        BufferManagement(FishBuffer... buffers){
+        public BufferManagement(FishBuffer... buffers){
             for (FishBuffer buffer: buffers)
             this.buffers.add(Buffer.startBuffer(buffer));
         }
 
-        void check(){
+        public void check(){
             buffers.forEach(Buffer::check);
         }
     }
@@ -68,6 +64,12 @@ public class Buffer {
     static class Knife extends Buffer {
         private Knife() {
             super(KeyEvent.VK_F, 3000 + 60 * 60 * 1000);
+        }
+    }
+    static class Special extends Buffer {
+
+        private Special() {
+            super(KeyEvent.VK_G, 3000 + 10 * 60 * 1000);
         }
     }
 }

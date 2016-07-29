@@ -8,19 +8,17 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 public class MyAction {
-    static Robot robot;
-    static Toolkit toolkit;
+    private static Robot robot;
 
     static {
         try {
             robot = new Robot();
-            toolkit = Toolkit.getDefaultToolkit();
         } catch (AWTException e) {
             e.printStackTrace();
         }
     }
 
-    static void rightClick(int x, int y) throws InterruptedException {
+    public static void rightClick(int x, int y) throws InterruptedException {
         robot.mouseMove(x, y);
         Thread.sleep(100);
         robot.mousePress(InputEvent.BUTTON3_MASK);
@@ -30,13 +28,13 @@ public class MyAction {
         robot.mouseMove(300, 10);
     }
 
-    static void keyPress() {
+    public static void keyPress() {
         keyPress(KeyEvent.VK_E);
     }
 
-    static void keyPress(int key) {
+    public static void keyPress(int key) {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException ex) {
             ex.printStackTrace();
             return;

@@ -1,22 +1,16 @@
-package org.free;
+package org.free.ui;
 
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import org.free.buffer.Buffer;
+import org.free.graph.GraphHelper;
+import org.free.MyAction;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Date;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 public class Fisher extends JFrame {
     /**
@@ -27,24 +21,20 @@ public class Fisher extends JFrame {
     static boolean autoClose = false;
     static int autoCloseTime = 1000 * 60 * 6 * 25;
 
-    public static void main(String[] args) throws InterruptedException {
-//		JFrame.setDefaultLookAndFeelDecorated(true);
+    public static void main(String[] args) throws InterruptedException, AWTException {
         new Fisher();
-        // f.startFish();
     }
 
-    public static Grapher g;
-    public static JButton stop, start, position;
-    static boolean running = true;
+    private GraphHelper graphHelper;
+    public static boolean running = true;
 
-    public Fisher() {
+    Fisher() throws AWTException {
+        graphHelper = new GraphHelper();
         this.setAlwaysOnTop(true);
-        this.setBounds(10, 10, 240, 100);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(new GridLayout(2, 1));
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.init();
+        this.pack();
         this.setVisible(true);
-        g = new Grapher();
         instance = this;
     }
 
@@ -53,11 +43,8 @@ public class Fisher extends JFrame {
 
         final JPanel conPanel = new JPanel(new FlowLayout());
         f.getContentPane().add(conPanel);
-        final JPanel confPanel = new JPanel(new FlowLayout());
-        f.getContentPane().add(confPanel);
 
         addControl(conPanel);
-        addConf(confPanel);
     }
 
     private void addControl(JPanel conPanel) {
@@ -66,30 +53,27 @@ public class Fisher extends JFrame {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    if (new File("img").exists())
-                        Grapher.deleteFileOrFolder(new File("img").toPath());
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+
                 running = true;
                 startButton.setEnabled(false);
+                graphHelper.start();
 
                 new Thread() {
                     @Override
                     public void run() {
-                        final Buffer.BufferManagement buffer = new Buffer.BufferManagement(Buffer.FishBuffer.Bait, Buffer.FishBuffer.Knife);
+                        final Buffer.BufferManagement buffer = new Buffer.BufferManagement(Buffer.FishBuffer.Bait, Buffer.FishBuffer.Knife, Buffer.FishBuffer.Special);
                         while (true) {
                             buffer.check();
                             MyAction.keyPress();
                             try {
-                                g.run();
+                                graphHelper.run();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            f.setTitle(Grapher.all + " - " + Grapher.succeed);
-                            if (!running)
+                            f.setTitle(graphHelper.all + " - " + graphHelper.succeed);
+                            if (!running) {
                                 break;
+                            }
                         }
                     }
                 }.start();
@@ -101,17 +85,12 @@ public class Fisher extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final JFrame f = new JFrame();
-//				com.sun.awt.AWTUtilities.setWindowOpacity(f, 0.5f);
-                f.setBounds(Grapher.left, Grapher.top, Grapher.width,
-                        Grapher.height);
+                f.setBounds(graphHelper.fishRectangle);
                 f.setAlwaysOnTop(true);
                 f.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosing(WindowEvent e) {
-                        Grapher.left = f.getX();
-                        Grapher.top = f.getY();
-                        Grapher.width = f.getWidth();
-                        Grapher.height = f.getHeight();
+                        graphHelper.fishRectangle = new Rectangle(f.getBounds());
                     }
                 });
                 f.setVisible(true);
@@ -125,32 +104,12 @@ public class Fisher extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 running = false;
                 startButton.setEnabled(true);
+                graphHelper.stop();
             }
         });
 
         conPanel.add(startButton);
         conPanel.add(positionButton);
         conPanel.add(stopButton);
-    }
-
-    private void addConf(JPanel confPanel) {
-        final JCheckBox enBait = new JCheckBox("鱼饵");
-        final JTextField inBait = new JTextField(Conf.inBait);
-        enBait.setSelected(Conf.enBait);
-        inBait.setPreferredSize(new Dimension(50, 20));
-        if (Conf.enBait)
-            inBait.setText("" + Conf.inBait);
-        enBait.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Conf.enBait = enBait.isSelected();
-                if (Conf.enBait)
-                    Conf.inBait = Integer.parseInt(inBait.getText().trim());
-            }
-        });
-
-        confPanel.add(enBait);
-        confPanel.add(inBait);
     }
 }
