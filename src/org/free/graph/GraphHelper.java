@@ -30,7 +30,7 @@ public class GraphHelper {
     private List<BufferedImage> images = new ArrayList<>();
     private final Robot robot = new Robot();
     private boolean running = false;
-    File imgFolder = new File("img");
+    private File imgFolder = new File("img");
 
     public GraphHelper() throws AWTException {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -62,7 +62,7 @@ public class GraphHelper {
                 return;
             while (new Date().getTime() - start < Conf.interval * 1000) {
                 Thread.sleep(Conf.scanInterval);
-                if (!Fisher.running) {
+                if (!running) {
                     break;
                 }
 
