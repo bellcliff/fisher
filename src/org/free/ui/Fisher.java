@@ -1,16 +1,14 @@
 package org.free.ui;
 
 import org.free.buffer.Buffer;
+import org.free.config.Conf;
 import org.free.graph.GraphHelper;
 import org.free.MyAction;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.util.function.Consumer;
 
 import javax.swing.*;
 
@@ -19,29 +17,45 @@ public class Fisher extends JFrame {
      *
      */
     private static final long serialVersionUID = 1L;
+    public static Fisher fisher;
 
     public static void main(String[] args) throws InterruptedException, AWTException {
-        new Fisher();
+        fisher = new Fisher();
     }
 
     private GraphHelper graphHelper;
-    public static boolean running = true;
+    private boolean running = true;
+    private final JPanel dispPanel = new JPanel();
+    private final JPanel potPanel = new JPanel();
+    private final JLabel scanImgLabel = new JLabel();
+    private final JLabel potImgLabel = new JLabel();
 
     private Fisher() throws AWTException {
         graphHelper = new GraphHelper();
         this.setAlwaysOnTop(true);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setBounds(0, 0, 200, 600);
         this.init();
+        this.pack();
         this.setVisible(true);
     }
-    private final JPanel dispPanel = new JPanel();
     private void init() {
-        final JPanel conPanel = new JPanel(new FlowLayout());
+        getContentPane().setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
 
-        getContentPane().add(conPanel);
-        getContentPane().add(dispPanel);
+        final JPanel conPanel = new JPanel();
+        getContentPane().add(conPanel, c);
         addControl(conPanel);
+
+        c.gridx = 0;
+        c.gridy = 1;
+        getContentPane().add(dispPanel, c);
+        dispPanel.add(scanImgLabel);
+
+        c.gridx = 0;
+        c.gridy = 2;
+        getContentPane().add(potPanel, c);
+        potPanel.add(potImgLabel);
+
     }
 
     private void addControl(JPanel conPanel) {
@@ -100,10 +114,19 @@ public class Fisher extends JFrame {
     }
 
     public void updateImage(BufferedImage bufferedImage) {
-        JLabel wIcon = new JLabel(new ImageIcon(bufferedImage));
-        int h = bufferedImage.getHeight() * this.getWidth() / bufferedImage.getWidth();
-        wIcon.setBounds(new Rectangle(0, 0, this.getWidth(), h));
-        dispPanel.removeAll();
-        dispPanel.add(wIcon);
+        int height = bufferedImage.getHeight() * this.getWidth() / bufferedImage.getWidth();
+        scanImgLabel.setIcon(new ImageIcon(bufferedImage.getScaledInstance(this.getWidth(), height, Image.SCALE_SMOOTH)));
+        scanImgLabel.repaint();
+        dispPanel.repaint();
+        this.revalidate();
+        this.pack();
+    }
+
+    public void updatePot(BufferedImage pot){
+        potImgLabel.setIcon(new ImageIcon(pot));
+        potImgLabel.repaint();
+        this.revalidate();
+        this.pack();
+
     }
 }

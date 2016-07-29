@@ -94,6 +94,7 @@ public class GraphHelper {
             if (found) break;
         }
         if (x0 == -1) return null;
+        Fisher.fisher.updateImage(img);
         int left = x0 + Conf.scanLeft, top = y0 + Conf.scanTop, w = Conf.scanWidth, h = Conf.scanHeight;
         baseLight = getRectangleLight(img.getSubimage(left, top, w, h));
         return new Rectangle(fishRectangle.x + left, fishRectangle.y + top, w, h);
@@ -117,7 +118,11 @@ public class GraphHelper {
         images.add(img);
         int light = getRectangleLight(img);
         System.out.println(light + "-" + baseLight + "-" + (light - baseLight));
-        return light > baseLight + Conf.scanLight;
+        if (light > baseLight + Conf.scanLight){
+            Fisher.fisher.updatePot(img);
+            return true;
+        }
+        return false;
     }
 
     private boolean checkRed(BufferedImage img, int x, int y) {
