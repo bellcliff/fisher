@@ -118,8 +118,8 @@ public class GraphHelper {
         images.add(img);
         int light = getRectangleLight(img);
         System.out.println(light + "-" + baseLight + "-" + (light - baseLight));
-        if (light > baseLight + Conf.scanLight){
-            Fisher.fisher.updatePot(img);
+        if (light > baseLight + Conf.EDITABLE_CONF.getScanLight()){
+            Fisher.fisher.updatePot(light, baseLight, img);
             return true;
         }
         return false;
@@ -169,7 +169,7 @@ public class GraphHelper {
         images.clear();
     }
 
-    public static void deleteFileOrFolder(final Path path) {
+    static void deleteFileOrFolder(final Path path) {
         try {
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                 @Override

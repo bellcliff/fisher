@@ -11,6 +11,8 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class Fisher extends JFrame {
     /**
@@ -25,37 +27,79 @@ public class Fisher extends JFrame {
 
     private GraphHelper graphHelper;
     private boolean running = true;
+    private final JPanel conPanel = new JPanel();
     private final JPanel dispPanel = new JPanel();
     private final JPanel potPanel = new JPanel();
     private final JLabel scanImgLabel = new JLabel();
+    private final JTextField potLightEdit = new JTextField(""+Conf.scanLight, 5);
     private final JLabel potImgLabel = new JLabel();
+    private final JLabel potLightLabel = new JLabel();
 
     private Fisher() throws AWTException {
         graphHelper = new GraphHelper();
         this.setAlwaysOnTop(true);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.init();
+        this.revalidate();
         this.pack();
         this.setVisible(true);
     }
+
     private void init() {
+
+
         getContentPane().setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-
-        final JPanel conPanel = new JPanel();
-        getContentPane().add(conPanel, c);
-        addControl(conPanel);
+        initConPanel(c);
 
         c.gridx = 0;
         c.gridy = 1;
-        getContentPane().add(dispPanel, c);
-        dispPanel.add(scanImgLabel);
+        initPotPanel(c);
 
         c.gridx = 0;
         c.gridy = 2;
-        getContentPane().add(potPanel, c);
-        potPanel.add(potImgLabel);
+        initScanPanel(c);
+    }
 
+    private void initConPanel(GridBagConstraints c) {
+        getContentPane().add(conPanel, c);
+        addControl(conPanel);
+    }
+
+    private void initPotPanel(GridBagConstraints c) {
+        potPanel.setLayout(new GridLayout(1, 3));
+        potPanel.add(potLightEdit);
+        potPanel.add(potLightLabel);
+        potPanel.add(potImgLabel);
+        getContentPane().add(potPanel, c);
+
+        potLightEdit.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+
+            void update(){
+                if (potLightLabel.getText().isEmpty()){return;}
+                int light = Integer.parseInt(potLightEdit.getText());
+                Conf.EDITABLE_CONF.updateScanLight(light);
+            }
+        });
+    }
+
+    private void initScanPanel(GridBagConstraints c) {
+        getContentPane().add(dispPanel, c);
+        dispPanel.add(scanImgLabel);
     }
 
     private void addControl(JPanel conPanel) {
@@ -114,19 +158,23 @@ public class Fisher extends JFrame {
     }
 
     public void updateImage(BufferedImage bufferedImage) {
-        int height = bufferedImage.getHeight() * this.getWidth() / bufferedImage.getWidth();
-        scanImgLabel.setIcon(new ImageIcon(bufferedImage.getScaledInstance(this.getWidth(), height, Image.SCALE_SMOOTH)));
+        int width = 200;
+        int height = bufferedImage.getHeight() * width / bufferedImage.getWidth();
+        scanImgLabel.setIcon(new ImageIcon(bufferedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH)));
         scanImgLabel.repaint();
+        dispPanel.revalidate();
         dispPanel.repaint();
         this.revalidate();
         this.pack();
     }
 
-    public void updatePot(BufferedImage pot){
+    public void updatePot(int light, int base, BufferedImage pot) {
+        potLightLabel.setText(light + "-" + base);
         potImgLabel.setIcon(new ImageIcon(pot));
         potImgLabel.repaint();
+        potPanel.revalidate();
+        potPanel.repaint();
         this.revalidate();
         this.pack();
-
     }
 }
