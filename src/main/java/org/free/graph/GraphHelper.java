@@ -35,8 +35,7 @@ public class GraphHelper {
     public GraphHelper() throws AWTException {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension dim = toolkit.getScreenSize();
-        fishRectangle = new Rectangle(400, 50, dim.width - 800, dim.height / 2 - 300);
-        System.out.println(fishRectangle);
+        updateFishRectangle(new Rectangle(400, 50, dim.width - 800, 200));
     }
 
     public void start() {
@@ -44,6 +43,11 @@ public class GraphHelper {
         if (imgFolder.exists()){
             deleteFileOrFolder(imgFolder.toPath());
         }
+    }
+
+    public void updateFishRectangle(Rectangle rec) {
+        System.out.println(rec);
+        fishRectangle = rec;
     }
 
     public void stop(){
@@ -57,9 +61,11 @@ public class GraphHelper {
         fileIndex = 0;
         System.out.println("=====");
         try {
-            Rectangle fisherPotRectangle = getFisherPot(robot.createScreenCapture(fishRectangle));
+            BufferedImage img = robot.createScreenCapture(fishRectangle);
+            Rectangle fisherPotRectangle = getFisherPot(img);
             if (fisherPotRectangle == null)
                 return;
+            Fisher.fisher.updateFishPanel(img);
             while (new Date().getTime() - start < Conf.interval * 1000) {
                 Thread.sleep(Conf.scanInterval);
                 if (!running) {
@@ -75,6 +81,7 @@ public class GraphHelper {
         } finally {
             saveFile();
             all++;
+            Fisher.fisher.scanPanel.updateFish(all, succeed);
         }
     }
 
@@ -96,8 +103,10 @@ public class GraphHelper {
         if (x0 == -1) return null;
 
         int left = x0 + Conf.scanLeft, top = y0 + Conf.scanTop, w = Conf.scanWidth, h = Conf.scanHeight;
-        Fisher.fisher.updateImage(img.getSubimage(left, top, w, h), 0);
-        baseLight = getRectangleLight(img.getSubimage(left, top, w, h));
+        System.out.println(left + "-" + top + "-" + w + "-" + h+","+img.getWidth() + "," + img.getHeight());
+        BufferedImage potImage = img.getSubimage(left, top, w, h);
+        Fisher.fisher.scanPanel.updateImage(potImage, 0);
+        baseLight = getRectangleLight(potImage);
         return new Rectangle(fishRectangle.x + left, fishRectangle.y + top, w, h);
     }
 
@@ -120,7 +129,7 @@ public class GraphHelper {
         int light = getRectangleLight(img);
         System.out.println(light + "-" + baseLight + "-" + (light - baseLight));
         if (light > baseLight + Conf.EDITABLE_CONF.getScanLight()){
-            Fisher.fisher.updatePot(light, baseLight, img);
+            Fisher.fisher.scanPanel.updatePot(light, baseLight, img);
             return true;
         }
         return false;
@@ -130,7 +139,7 @@ public class GraphHelper {
         for (int x0 = x; x0 < x + Conf.scanBlock; x0++) {
             for (int y0 = y; y0 < y + Conf.scanBlock; y0++) {
                 Color c = new Color(img.getRGB(x0, y0));
-                if (c.getRed() < c.getGreen() + c.getBlue()) {
+                if (c.getRed() < c.getGreen() + c.getBlue() + Conf.POT_COLOR_DIFF) {
                     return false;
                 }
             }
