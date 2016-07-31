@@ -79,23 +79,24 @@ public class GraphHelper {
     }
 
     private Rectangle getFisherPot(BufferedImage img) throws IOException {
-        images.add(img);
+        // images.add(img);
         // find a block with 4 * 4, which all full fil red check
         int x0 = -1, y0 = -1;
         for (int x = 0; x < img.getWidth() - Conf.scanBlock; x++) {
-            boolean found = false;
             for (int y = 0; y < img.getHeight() - Conf.scanBlock; y++) {
                 if (checkRed(img, x, y)) {
-                    x0 = x;
-                    y0 = y;
-                    found = true;
+                    if (x0 + y0 < x + y) {
+                        x0 = x;
+                        y0 = y;
+                    }
                 }
             }
-            if (found) break;
         }
+
         if (x0 == -1) return null;
-        Fisher.fisher.updateImage(img);
+
         int left = x0 + Conf.scanLeft, top = y0 + Conf.scanTop, w = Conf.scanWidth, h = Conf.scanHeight;
+        Fisher.fisher.updateImage(img.getSubimage(left, top, w, h), 0);
         baseLight = getRectangleLight(img.getSubimage(left, top, w, h));
         return new Rectangle(fishRectangle.x + left, fishRectangle.y + top, w, h);
     }

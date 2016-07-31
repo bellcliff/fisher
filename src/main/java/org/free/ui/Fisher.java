@@ -55,10 +55,6 @@ public class Fisher extends JFrame {
         c.gridx = 0;
         c.gridy = 1;
         initPotPanel(c);
-
-        c.gridx = 0;
-        c.gridy = 2;
-        initScanPanel(c);
     }
 
     private void initConPanel(GridBagConstraints c) {
@@ -70,7 +66,12 @@ public class Fisher extends JFrame {
         potPanel.setLayout(new GridLayout(1, 3));
         potPanel.add(potLightEdit);
         potPanel.add(potLightLabel);
-        potPanel.add(potImgLabel);
+
+        final JPanel potImagePanel = new JPanel(new GridLayout(1, 2));
+        potPanel.add(potImagePanel);
+        potImagePanel.add(potImgLabel);
+        potImagePanel.add(scanImgLabel);
+
         getContentPane().add(potPanel, c);
 
         potLightEdit.getDocument().addDocumentListener(new DocumentListener() {
@@ -157,11 +158,12 @@ public class Fisher extends JFrame {
         conPanel.add(stopButton);
     }
 
-    public void updateImage(BufferedImage bufferedImage) {
-        int width = 200;
-        int height = bufferedImage.getHeight() * width / bufferedImage.getWidth();
-        scanImgLabel.setIcon(new ImageIcon(bufferedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH)));
-        scanImgLabel.repaint();
+    public void updateImage(BufferedImage bufferedImage, int type) {
+        JLabel label = type == 0 ? scanImgLabel:potImgLabel;
+        int height = label.getParent().getHeight();
+        int width = bufferedImage.getWidth() * height / bufferedImage.getHeight();
+        label.setIcon(new ImageIcon(bufferedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH)));
+        label.repaint();
         dispPanel.revalidate();
         dispPanel.repaint();
         this.revalidate();
@@ -170,11 +172,6 @@ public class Fisher extends JFrame {
 
     public void updatePot(int light, int base, BufferedImage pot) {
         potLightLabel.setText(light + "-" + base);
-        potImgLabel.setIcon(new ImageIcon(pot));
-        potImgLabel.repaint();
-        potPanel.revalidate();
-        potPanel.repaint();
-        this.revalidate();
-        this.pack();
+        updateImage(pot, 1);
     }
 }
