@@ -124,18 +124,6 @@ public class GraphHelper {
         return false;
     }
 
-    private boolean checkRed(BufferedImage img, int x, int y) {
-        for (int x0 = x; x0 < x + Conf.scanBlock; x0++) {
-            for (int y0 = y; y0 < y + Conf.scanBlock; y0++) {
-                Color c = new Color(img.getRGB(x0, y0));
-                if (c.getRed() < c.getGreen() + c.getBlue() + Conf.POT_COLOR_DIFF) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     private int getRGB(BufferedImage img, int x, int y) {
         Color c = new Color(img.getRGB(x, y));
         return c.getRed() + c.getBlue() + c.getGreen();

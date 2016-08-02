@@ -8,12 +8,11 @@ public interface Conf {
 
 	boolean DEBUG = false;
 
-	int scanLeft = 10;
-	int scanTop = -10;
-	int scanWidth = 30;
+	int scanLeft = 5;
+	int scanTop = -15;
+	int scanWidth = 50;
 	int scanHeight = 30;
 	int scanLight = 25;
-	int scanBlock = 4;
 	int scanInterval = 100;
 	EditableConf EDITABLE_CONF = new EditableConf();
 }
