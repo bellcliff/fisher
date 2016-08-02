@@ -1,8 +1,5 @@
 package org.free.graph;
 
-import org.free.config.Conf;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -12,15 +9,28 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PotHelper {
 
-    private Map<Point, Integer> getDiffMap(BufferedImage img) {
-        Raster raster = img.getRaster();
+    private final Map<Point, Integer> rgbMap;
+    private final BufferedImage image;
+    private final Set<Map.Entry<Point, Integer>> rgbSet;
+    private final int maxDiff;
+
+    PotHelper(BufferedImage image) {
+        this.image = image;
+        this.rgbMap = getDiffMap();
+        this.rgbSet = rgbMap.entrySet();
+        this.maxDiff = rgbSet.stream().max((o1, o2) -> o1.getValue() - o2.getValue()).get().getValue();
+    }
+
+    private Map<Point, Integer> getDiffMap() {
+        Raster raster = image.getRaster();
         Map<Point, Integer> rgbMap = new HashMap<>();
-        for (int x = 0; x < img.getWidth(); x++) {
-            for (int y = 0; y < img.getHeight(); y++) {
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
                 int[] rgba = raster.getPixel(x, y, new int[4]);
                 rgbMap.put(new Point(x, y), rgba[0] - rgba[1] - rgba[2]);
             }
@@ -28,82 +38,78 @@ public class PotHelper {
         return rgbMap;
     }
 
-    /**
-     * 根据当前diff寻找合适的点,
-     * 如果没有满足条件的点, 尝试降低diff
-     * 如果满足条件的点多余100, 尝试扩大匹配范围
-     * 如果依然不满足则放弃本次查询
-     * @param image the captured image
-     * @return Point
-     */
-    Point getRedPoint(BufferedImage image) {
-        Conf.EDITABLE_CONF.resetPotColorDiff();
-        Conf.EDITABLE_CONF.resetPotColorSize();
-        Map<Point, Integer> rgbMap = getDiffMap(image);
+    Point getRedPoint() throws IOException {
+        int diff = maxDiff, size = 4;
         List<Point> redPoints;
-        int count = 0;
         while (true) {
-            redPoints = getRedPoint(rgbMap, Conf.EDITABLE_CONF.getPotColorDiff());
-            if (redPoints.size() > 0)
+            redPoints = getRedPoints(diff, size);
+            if (redPoints.size() > 200) {
                 break;
-            Conf.EDITABLE_CONF.updatePotColorDiff(-10);
-            count++;
-            if (count > 20) return null;
+            }
+            diff -= 10;
         }
-        if (redPoints.size() < 100)
-            return redPoints.get(redPoints.size() - 1);
-        Conf.EDITABLE_CONF.updatePotColorSize(1);
         while (true) {
-            redPoints = getRedPoint(rgbMap, Conf.EDITABLE_CONF.getPotColorDiff());
-            if (redPoints.size() > 0)
-                break;
-            Conf.EDITABLE_CONF.updatePotColorSize(1);
-            count++;
-            if (count > 20) return null;
+            if (redPoints.size() < 100) break;
+            size += 1;
+            redPoints = getRedPoints(diff, size);
+
         }
-        if (redPoints.size() < 100)
-            return redPoints.get(redPoints.size() - 1);
-        return null;
+        if (redPoints.size() == 0) throw new IOException();
+        redPoints.sort((o1, o2) -> o1.x + o1.y - o2.x - o2.y);
+        return redPoints.get(0);
     }
 
     /**
-     * 尝试获取diff情况下满足条件的点的组合
-     * @param rgbMap
+     * 获取满足条件
+     *
      * @param diff
+     * @param size
      * @return
      */
-    private List<Point> getRedPoint(Map<Point, Integer> rgbMap, int diff) {
-        List<Point> redPoints = rgbMap.entrySet().stream().filter(entry -> entry.getValue() > diff)
-                .filter(entry -> checkRed(rgbMap, entry.getKey(), Conf.EDITABLE_CONF.getPotColorSize()))
+    List<Point> getRedPoints(int diff, int size) throws IOException {
+        System.out.println("色差: " + diff + ", " + size);
+        return rgbSet.stream().filter(entry -> entry.getValue() > diff)
+                .filter(entry -> checkRed(entry.getKey(), diff, size))
                 .map(Map.Entry::getKey).collect(Collectors.toList());
-
-        System.out.println("size: " + redPoints.size());
-        return redPoints;
     }
 
     /**
-     * 判定所有当前点附近的点满足颜色判定
-     * @param rgbMap
-     * @param p
-     * @param length
+     * 判定当前点和周围点
+     *
+     * @param p        检测点
+     * @param distance 检测距离
      * @return
      */
-    private boolean checkRed(Map<Point, Integer> rgbMap, Point p, int length) {
-        if (!rgbMap.containsKey(p)) return false;
-        boolean isRed = rgbMap.get(p) > Conf.EDITABLE_CONF.getPotColorDiff();
-        return !isRed || length == 0 || (checkRed(rgbMap, new Point(p.x - 1, p.y), length - 1)
-                && checkRed(rgbMap, new Point(p.x + 1, p.y), length - 1)
-                && checkRed(rgbMap, new Point(p.x, p.y - 1), length - 1)
-                && checkRed(rgbMap, new Point(p.x, p.y + 1), length - 1));
+    private boolean checkRed(Point p, int diff, int distance) {
+        Point pLeft = new Point(p.x - distance, p.y);
+        Point pRight = new Point(p.x + distance, p.y);
+        Point pUp = new Point(p.x, p.y - distance);
+        Point pDown = new Point(p.x, p.y + distance);
+        return checkRed(pLeft, diff) && checkRed(pRight, diff) && checkRed(pUp, diff) && checkRed(pDown, diff);
+    }
+
+    private boolean checkRed(Point p, int diff) {
+        return rgbMap.containsKey(p) && rgbMap.get(p) > diff;
+    }
+
+    private void drawSquare(File file, Point redPoint) throws IOException {
+        int diff = rgbMap.get(redPoint);
+        for (Point p : rgbSet.stream().filter(pointIntegerEntry -> pointIntegerEntry.getValue() >= diff).map(Map.Entry::getKey).collect(Collectors.toList()))
+            image.setRGB(p.x, p.y, 0);
+        ImageIO.write(image, "PNG", file);
     }
 
     public static void main(String... args) throws IOException {
-        BufferedImage image = ImageIO.read(new File("b.png"));
-        PotHelper ph = new PotHelper();
+        BufferedImage image = ImageIO.read(new File("a.png"));
         long start = System.currentTimeMillis();
 
-        System.out.println(ph.getRedPoint(image));
-        System.out.println(Conf.EDITABLE_CONF.getPotColorDiff());
-        System.out.println("Time used: "+(System.currentTimeMillis() - start));
+        PotHelper ph = new PotHelper(image);
+        System.out.println("Time used: " + (System.currentTimeMillis() - start));
+
+        start = System.currentTimeMillis();
+        Point redPoint = ph.getRedPoint();
+        System.out.println("Time used: " + (System.currentTimeMillis() - start));
+
+        ph.drawSquare(new File("c.png"), redPoint);
     }
 }

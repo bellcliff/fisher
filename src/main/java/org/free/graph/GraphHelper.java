@@ -88,8 +88,8 @@ public class GraphHelper {
     private Rectangle getFisherPot(BufferedImage img) throws IOException {
         // images.add(img);
         // find a block with 4 * 4, which all full fil red check
-        PotHelper ph = new PotHelper();
-        Point p = ph.getRedPoint(img);
+        PotHelper ph = new PotHelper(img);
+        Point p = ph.getRedPoint();
         if (p == null) return null;
         int left = p.x + Conf.scanLeft, top = p.y + Conf.scanTop, w = Conf.scanWidth, h = Conf.scanHeight;
         System.out.println(left + "-" + top + "-" + w + "-" + h+","+img.getWidth() + "," + img.getHeight());

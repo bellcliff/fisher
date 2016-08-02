@@ -25,12 +25,11 @@ class ControllerPanel extends JPanel {
 
     private void init() {
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "控制台"));
-        setLayout(new GridLayout(2,2));
+        setLayout(new GridLayout(1, 3));
 
         add(getStartButton());
         add(getPositionButton());
         add(getStopButton());
-        add(getLightText());
     }
 
     private JButton getStartButton() {
@@ -51,7 +50,6 @@ class ControllerPanel extends JPanel {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        fisher.setTitle(fisher.graphHelper.all + " - " + fisher.graphHelper.succeed);
                         if (!running) {
                             break;
                         }
@@ -90,32 +88,4 @@ class ControllerPanel extends JPanel {
         return stopButton;
     }
 
-    private JTextField getLightText() {
-        final JTextField lightEdit = new JTextField(""+Conf.scanLight);
-        lightEdit.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                update();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                update();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                update();
-            }
-
-            void update() {
-                if (lightEdit.getText().isEmpty()) {
-                    return;
-                }
-                int light = Integer.parseInt(lightEdit.getText());
-                Conf.EDITABLE_CONF.updateScanLight(light);
-            }
-        });
-        return lightEdit;
-    }
 }
