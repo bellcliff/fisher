@@ -1,11 +1,12 @@
 package org.free;
 
+
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
+
 public class MyAction {
-//    private static Logger logger = Logger.getLogger("");
     private static Robot robot;
 
     static {

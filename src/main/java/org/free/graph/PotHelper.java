@@ -98,18 +98,4 @@ public class PotHelper {
             image.setRGB(p.x, p.y, 0);
         ImageIO.write(image, "PNG", file);
     }
-
-    public static void main(String... args) throws IOException {
-        BufferedImage image = ImageIO.read(new File("a.png"));
-        long start = System.currentTimeMillis();
-
-        PotHelper ph = new PotHelper(image);
-        System.out.println("Time used: " + (System.currentTimeMillis() - start));
-
-        start = System.currentTimeMillis();
-        Point redPoint = ph.getRedPoint();
-        System.out.println("Time used: " + (System.currentTimeMillis() - start));
-
-        ph.drawSquare(new File("c.png"), redPoint);
-    }
 }
