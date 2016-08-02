@@ -35,7 +35,7 @@ public class GraphHelper {
     public GraphHelper() throws AWTException {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension dim = toolkit.getScreenSize();
-        updateFishRectangle(new Rectangle(400, 50, dim.width - 800, 200));
+        updateFishRectangle(new Rectangle(400, 50, dim.width - 800, 100));
     }
 
     public void start() {
@@ -73,7 +73,7 @@ public class GraphHelper {
                 }
 
                 if (checkFloat(robot.createScreenCapture(fisherPotRectangle))) {
-                    MyAction.rightClick(fisherPotRectangle.x, fisherPotRectangle.y);
+                    MyAction.rightClick(fisherPotRectangle.x + Conf.scanWidth / 2, fisherPotRectangle.y + Conf.scanHeight / 2);
                     succeed++;
                     break;
                 }
@@ -88,21 +88,10 @@ public class GraphHelper {
     private Rectangle getFisherPot(BufferedImage img) throws IOException {
         // images.add(img);
         // find a block with 4 * 4, which all full fil red check
-        int x0 = -1, y0 = -1;
-        for (int x = 0; x < img.getWidth() - Conf.scanBlock; x++) {
-            for (int y = 0; y < img.getHeight() - Conf.scanBlock; y++) {
-                if (checkRed(img, x, y)) {
-                    if (x0 + y0 < x + y) {
-                        x0 = x;
-                        y0 = y;
-                    }
-                }
-            }
-        }
-
-        if (x0 == -1) return null;
-
-        int left = x0 + Conf.scanLeft, top = y0 + Conf.scanTop, w = Conf.scanWidth, h = Conf.scanHeight;
+        PotHelper ph = new PotHelper();
+        Point p = ph.getRedPoint(img);
+        if (p == null) return null;
+        int left = p.x + Conf.scanLeft, top = p.y + Conf.scanTop, w = Conf.scanWidth, h = Conf.scanHeight;
         System.out.println(left + "-" + top + "-" + w + "-" + h+","+img.getWidth() + "," + img.getHeight());
         BufferedImage potImage = img.getSubimage(left, top, w, h);
         Fisher.fisher.scanPanel.updateImage(potImage, 0);

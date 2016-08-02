@@ -52,17 +52,16 @@ public class Fisher extends JFrame {
 
         c.gridy = 2;
         JPanel fishPanel = new JPanel();
-        fishPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()));
-        fishPanel.setPreferredSize(new Dimension(200, 60));
+        fishPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "扫描"));
+        fishPanel.setPreferredSize(new Dimension(230, 80));
         fishPanel.add(fishLabel);
         add(fishPanel, c);
     }
 
     public void updateFishPanel(BufferedImage img){
-        int w = 200;
+        int w = 180;
         int h = img.getHeight() * w / img.getWidth();
         fishLabel.setIcon(new ImageIcon(img.getScaledInstance(w, h, Image.SCALE_SMOOTH)));
-        getParent().setPreferredSize(new Dimension(w+10, h+10));
         validate();
         pack();
         repaint();
