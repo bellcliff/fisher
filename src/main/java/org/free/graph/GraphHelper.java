@@ -24,10 +24,9 @@ import static java.nio.file.FileVisitResult.TERMINATE;
 public class GraphHelper {
     //	static boolean debug = true;
     public Rectangle fishRectangle;
-    public int all, succeed;
-    private int dirIndex = 0, fileIndex = 0;
     private int baseLight;
-    private List<BufferedImage> images = new ArrayList<>();
+    private int all, succeed;
+    private int dirIndex = 0, fileIndex = 0;
     private final Robot robot = new Robot();
     private boolean running = false;
     private File imgFolder = new File("img");
@@ -35,18 +34,14 @@ public class GraphHelper {
     public GraphHelper() throws AWTException {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension dim = toolkit.getScreenSize();
-        updateFishRectangle(new Rectangle(400, 50, dim.width - 800, 100));
+        updateFishRectangle(new Rectangle(500, 100, dim.width - 1000, 200));
     }
 
     public void start() {
         running = true;
-        if (imgFolder.exists()){
-            deleteFileOrFolder(imgFolder.toPath());
-        }
     }
 
     public void updateFishRectangle(Rectangle rec) {
-        System.out.println(rec);
         fishRectangle = rec;
     }
 
@@ -61,11 +56,15 @@ public class GraphHelper {
         fileIndex = 0;
         System.out.println("=====");
         try {
+
             BufferedImage img = robot.createScreenCapture(fishRectangle);
-            Rectangle fisherPotRectangle = getFisherPot(img);
-            if (fisherPotRectangle == null)
+            PotHelper ph = new PotHelper(img);
+            Rectangle potRect = ph.getPotRectangle(PotHelper.PotType.RED);
+            if (potRect == null)
                 return;
-            Fisher.fisher.updateFishPanel(img);
+            baseLight = getRectangleLight(img, potRect);
+            Rectangle fisherPotRectangle = getScreenPotRectangle(potRect);
+            Fisher.fisher.updateFishPanel(img, ph.getPotImage(PotHelper.PotType.RED));
             while (new Date().getTime() - start < Conf.interval * 1000) {
                 Thread.sleep(Conf.scanInterval);
                 if (!running) {
@@ -79,24 +78,14 @@ public class GraphHelper {
                 }
             }
         } finally {
-            saveFile();
             all++;
             Fisher.fisher.scanPanel.updateFish(all, succeed);
         }
     }
 
-    private Rectangle getFisherPot(BufferedImage img) throws IOException {
-        // images.add(img);
-        // find a block with 4 * 4, which all full fil red check
-        PotHelper ph = new PotHelper(img);
-        Point p = ph.getRedPoint();
-        if (p == null) return null;
-        int left = p.x + Conf.scanLeft, top = p.y + Conf.scanTop, w = Conf.scanWidth, h = Conf.scanHeight;
-        System.out.println(left + "-" + top + "-" + w + "-" + h+","+img.getWidth() + "," + img.getHeight());
-        BufferedImage potImage = img.getSubimage(left, top, w, h);
-        Fisher.fisher.scanPanel.updateImage(potImage, 0);
-        baseLight = getRectangleLight(potImage);
-        return new Rectangle(fishRectangle.x + left, fishRectangle.y + top, w, h);
+    private Rectangle getScreenPotRectangle(Rectangle rect){
+        if (rect == null) return null;
+        return new Rectangle(rect.x + fishRectangle.x, rect.y + fishRectangle.y, rect.width, rect.height);
     }
 
     private int getRectangleLight(BufferedImage img) throws IOException {
@@ -114,10 +103,9 @@ public class GraphHelper {
     }
 
     private boolean checkFloat(BufferedImage img) throws IOException {
-        images.add(img);
         int light = getRectangleLight(img);
-        System.out.println(light + "-" + baseLight + "-" + (light - baseLight));
-        if (light > baseLight + Conf.EDITABLE_CONF.getScanLight()){
+        System.out.println((light - baseLight) + " " + light + " " + baseLight);
+        if (light >= baseLight + Conf.EDITABLE_CONF.getScanLight()){
             Fisher.fisher.scanPanel.updatePot(light, baseLight, img);
             return true;
         }
@@ -128,66 +116,4 @@ public class GraphHelper {
         Color c = new Color(img.getRGB(x, y));
         return c.getRed() + c.getBlue() + c.getGreen();
     }
-
-    private boolean saveFile(BufferedImage img, int dir, int file) throws IOException {
-        File imgFolder = new File("img");
-        if (!imgFolder.exists() && !imgFolder.mkdir()) {
-            System.out.println("img folder create fail:" + imgFolder);
-            return false;
-        }
-        File fileFolder = new File(imgFolder, "" + dir);
-        if (!fileFolder.exists() && fileFolder.mkdir()) {
-            System.out.println("file folder create fail: " + fileFolder);
-            return false;
-        }
-        File f = new File(fileFolder, file + ".jpg");
-        ImageIO.write(img, "jpg", f);
-        return true;
-    }
-
-    private void saveFile() throws IOException {
-        if (!Conf.DEBUG)
-            return;
-        for (BufferedImage bi : images) {
-            if (!saveFile(bi, dirIndex, fileIndex++)) break;
-        }
-        dirIndex++;
-        fileIndex = 0;
-        images.clear();
-    }
-
-    static void deleteFileOrFolder(final Path path) {
-        try {
-            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
-                        throws IOException {
-                    Files.delete(file);
-                    return CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFileFailed(final Path file, final IOException e) {
-                    return handleException(e);
-                }
-
-                private FileVisitResult handleException(final IOException e) {
-                    e.printStackTrace(); // replace with more robust error handling
-                    return TERMINATE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(final Path dir, final IOException e)
-                        throws IOException {
-                    if (e != null) return handleException(e);
-                    Files.delete(dir);
-                    return CONTINUE;
-                }
-            });
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    ;
 }

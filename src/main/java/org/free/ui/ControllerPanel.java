@@ -5,6 +5,7 @@ import org.free.buffer.Buffer;
 import org.free.config.Conf;
 
 import javax.swing.*;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -38,10 +39,14 @@ class ControllerPanel extends JPanel {
             running = true;
             startButton.setEnabled(false);
             fisher.graphHelper.start();
-
             new Thread() {
                 @Override
                 public void run() {
+                    try {
+                        sleep(5000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
                     final Buffer.BufferManagement buffer = new Buffer.BufferManagement(Buffer.FishBuffer.Bait, Buffer.FishBuffer.Knife, Buffer.FishBuffer.Special);
                     while (true) {
                         buffer.check();
@@ -62,21 +67,28 @@ class ControllerPanel extends JPanel {
     }
 
     private JButton getPositionButton() {
-
         final JButton positionButton = new JButton("position");
+        final JFrame f1 = getJFrame();
         positionButton.addActionListener(e -> {
-            final JFrame f1 = new JFrame();
-            f1.setBounds(fisher.graphHelper.fishRectangle);
-            f1.setAlwaysOnTop(true);
-            f1.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    fisher.graphHelper.updateFishRectangle(new Rectangle(f1.getBounds()));
-                }
-            });
-            f1.setVisible(true);
+            f1.setVisible(!f1.isVisible());
         });
         return positionButton;
+    }
+
+    private JFrame getJFrame(){
+        JFrame f1 = new JFrame();
+        f1.setBounds(fisher.graphHelper.fishRectangle);
+        f1.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        f1.getRootPane().putClientProperty("Window.alpha", 0.2f);
+        f1.setUndecorated(true);
+        f1.setAlwaysOnTop(true);
+        f1.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                fisher.graphHelper.updateFishRectangle(new Rectangle(f1.getBounds()));
+            }
+        });
+        return f1;
     }
 
     private JButton getStopButton() {

@@ -3,16 +3,18 @@ package org.free.config;
 public interface Conf {
 	int interval = 22;
 
-	int POT_COLOR_DIFF = 100;
+	int POT_COLOR_DIFF = 80;
 	int POT_COLOR_SIZE = 5;
 
-	boolean DEBUG = false;
+	int scanLeft = 0;
+	int scanTop = 0;
+	int scanLeftBlue = -20;
+	int scanTopBlue = 0;
+	int scanWidth = 40;
+	int scanHeight = 40;
+	int scanLight = 10;
+	int scanInterval = 200;
 
-	int scanLeft = 15;
-	int scanTop = -15;
-	int scanWidth = 30;
-	int scanHeight = 30;
-	int scanLight = 40;
-	int scanInterval = 100;
+	int MIN_RED = 150;
 	EditableConf EDITABLE_CONF = new EditableConf();
 }

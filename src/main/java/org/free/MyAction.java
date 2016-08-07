@@ -33,12 +33,17 @@ public class MyAction {
 
     public static void keyPress(int key) {
         try {
-            Thread.sleep(500);
+            Thread.sleep(1000);
         } catch (InterruptedException ex) {
             ex.printStackTrace();
             return;
         }
         robot.keyPress(key);
         robot.keyRelease(key);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 }

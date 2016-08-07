@@ -24,7 +24,8 @@ public class Buffer {
     }
 
     private void check() {
-        if (System.currentTimeMillis() - startTime > interval) {
+        long gap = System.currentTimeMillis() - startTime;
+        if (gap > interval) {
             MyAction.keyPress(this.key);
             this.startTime = System.currentTimeMillis();
         }
@@ -66,6 +67,7 @@ public class Buffer {
             super(KeyEvent.VK_F, 3000 + 60 * 60 * 1000);
         }
     }
+
     static class Special extends Buffer {
 
         private Special() {

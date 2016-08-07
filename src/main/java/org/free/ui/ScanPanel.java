@@ -32,15 +32,13 @@ public class ScanPanel extends JPanel {
         add(potImgLabel);
     }
 
-    public void updateImage(BufferedImage bufferedImage, int type) {
+    private void updateImage(BufferedImage bufferedImage, int type) {
         JLabel label = type == 0 ? scanImgLabel : potImgLabel;
         int height = 30;
         int width = bufferedImage.getWidth() * height / bufferedImage.getHeight();
         label.setIcon(new ImageIcon(bufferedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH)));
 
         SwingUtilities.invokeLater(() -> {
-//            label.validate();
-//            label.repaint();
             validate();
             repaint();
         });
@@ -49,6 +47,10 @@ public class ScanPanel extends JPanel {
     public void updatePot(int light, int base, BufferedImage pot) {
         lightLabel.setText(light+"/"+base);
         updateImage(pot, 1);
+    }
+
+    void updateScanPot(BufferedImage pot){
+        updateImage(pot, 0);
     }
 
     public void updateFish(int all, int succ){

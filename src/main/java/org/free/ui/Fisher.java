@@ -19,15 +19,17 @@ public class Fisher extends JFrame {
 
     private JLabel fishLabel = new JLabel();
     public Fisher() throws AWTException {
+        fisher = this;
         graphHelper = new GraphHelper();
         init();
     }
 
     private void init() {
-        this.setAlwaysOnTop(true);
+        setAlwaysOnTop(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//        setBackground(new Color(0, 0, 0, 0));
         System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");
-        setPreferredSize(new Dimension(240, 260));
+        setPreferredSize(new Dimension(240, 360));
         setLayout(new GridBagLayout());
 
         initPanel();
@@ -49,15 +51,16 @@ public class Fisher extends JFrame {
         c.gridy = 2;
         JPanel fishPanel = new JPanel();
         fishPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "扫描"));
-        fishPanel.setPreferredSize(new Dimension(230, 80));
+        fishPanel.setPreferredSize(new Dimension(230, 150));
         fishPanel.add(fishLabel);
         add(fishPanel, c);
     }
 
-    public void updateFishPanel(BufferedImage img){
+    public void updateFishPanel(BufferedImage img, BufferedImage potImg){
         int w = 180;
         int h = img.getHeight() * w / img.getWidth();
         fishLabel.setIcon(new ImageIcon(img.getScaledInstance(w, h, Image.SCALE_SMOOTH)));
+        scanPanel.updateScanPot(potImg);
         validate();
         pack();
         repaint();
