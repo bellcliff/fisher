@@ -1,35 +1,20 @@
 package org.free.graph;
 
-import org.free.config.Conf;
 import org.free.MyAction;
+import org.free.config.Conf;
 import org.free.ui.Fisher;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
-import static java.nio.file.FileVisitResult.CONTINUE;
-import static java.nio.file.FileVisitResult.TERMINATE;
 
 public class GraphHelper {
-    //	static boolean debug = true;
     public Rectangle fishRectangle;
     private int baseLight;
     private int all, succeed;
-    private int dirIndex = 0, fileIndex = 0;
     private final Robot robot = new Robot();
     private boolean running = false;
-    private File imgFolder = new File("img");
 
     public GraphHelper() throws AWTException {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -52,8 +37,6 @@ public class GraphHelper {
     public void run() throws Exception {
         long start = new Date().getTime();
         Thread.sleep(4000);
-        dirIndex = 0;
-        fileIndex = 0;
         System.out.println("=====");
         try {
 
