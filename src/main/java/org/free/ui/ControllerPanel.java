@@ -27,6 +27,7 @@ class ControllerPanel extends JPanel {
     private void init() {
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "控制台"));
         setLayout(new GridLayout(2,2));
+        setPreferredSize(new Dimension(240, 160));
 
         add(getStartButton());
         add(getPositionButton());
@@ -34,6 +35,7 @@ class ControllerPanel extends JPanel {
         add(getLightText());
     }
 
+    int fail = 0;
     private JButton getStartButton() {
         startButton.addActionListener(e -> {
             running = true;
@@ -43,7 +45,7 @@ class ControllerPanel extends JPanel {
                 @Override
                 public void run() {
                     try {
-                        sleep(5000);
+                        sleep(3000);
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
                     }
@@ -53,10 +55,12 @@ class ControllerPanel extends JPanel {
                         MyAction.keyPress();
                         try {
                             fisher.graphHelper.run();
+                            fail = 0;
                         } catch (Exception e) {
                             e.printStackTrace();
+                            fail++;
                         }
-                        if (!running) {
+                        if (!running || fail > 20) {
                             break;
                         }
                     }
@@ -77,7 +81,7 @@ class ControllerPanel extends JPanel {
 
     private JFrame getJFrame(){
         JFrame f1 = new JFrame();
-        f1.setBounds(fisher.graphHelper.fishRectangle);
+        f1.setBounds(fisher.graphHelper.getFishRectangle());
         f1.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f1.getRootPane().putClientProperty("Window.alpha", 0.2f);
         f1.setUndecorated(true);

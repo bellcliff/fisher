@@ -27,7 +27,6 @@ public class Fisher extends JFrame {
     private void init() {
         setAlwaysOnTop(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//        setBackground(new Color(0, 0, 0, 0));
         System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");
         setPreferredSize(new Dimension(240, 360));
         setLayout(new GridBagLayout());
@@ -51,7 +50,7 @@ public class Fisher extends JFrame {
         c.gridy = 2;
         JPanel fishPanel = new JPanel();
         fishPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "扫描"));
-        fishPanel.setPreferredSize(new Dimension(230, 150));
+        fishPanel.setPreferredSize(new Dimension(240, 120));
         fishPanel.add(fishLabel);
         add(fishPanel, c);
     }
