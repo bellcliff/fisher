@@ -24,21 +24,15 @@ public class PotHelperTest {
     @org.junit.Before
     public void setUp() throws Exception {
         redImage = getImage("R");
-//        int w = blueImage.getWidth(), h = blueImage.getHeight();
-//        IntStream.range(0, w).boxed()
-//                .flatMap(x -> IntStream.range(0, h).mapToObj(y -> new Point(x, y)))
-//                .map(p -> new Color(blueImage.getRGB(p.x, p.y)))
-//                .collect(Collectors.toList());
     }
-//
-//    @org.junit.Test
-//    public void getBluePoint() throws Exception {
-//        assertEquals(new PotHelper(blueImage).getBluePoint().getX(), 701.0);
-//    }
-//
+
     @org.junit.Test
     public void getRedPoint() throws Exception {
-        assertEquals(new PotHelper(redImage).getRedPoint().getX(), 467.0);
+        try {
+            new PotHelper(redImage).getPotRectangle().getX();
+        } catch (IOException ex){
+
+        }
     }
 //
 //    @org.junit.Test
