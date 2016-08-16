@@ -3,6 +3,7 @@ package org.free.ui;
 import org.free.MyAction;
 import org.free.buffer.Buffer;
 import org.free.config.Conf;
+import org.free.graph.GraphHelper;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -21,6 +22,8 @@ class ControllerPanel extends JPanel {
 
     ControllerPanel(Fisher fisher) {
         this.fisher = fisher;
+
+        graphHelper = new GraphHelper();
         init();
     }
 
@@ -35,12 +38,14 @@ class ControllerPanel extends JPanel {
         add(getLightText());
     }
 
-    int fail = 0;
+    private int fail = 0;
+    private GraphHelper graphHelper;
+
     private JButton getStartButton() {
         startButton.addActionListener(e -> {
             running = true;
             startButton.setEnabled(false);
-            fisher.graphHelper.start();
+            graphHelper.start();
             new Thread() {
                 @Override
                 public void run() {
@@ -54,7 +59,7 @@ class ControllerPanel extends JPanel {
                         buffer.check();
                         MyAction.keyPress();
                         try {
-                            fisher.graphHelper.run();
+                            graphHelper.scan();
                             fail = 0;
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -81,7 +86,7 @@ class ControllerPanel extends JPanel {
 
     private JFrame getJFrame(){
         JFrame f1 = new JFrame();
-        f1.setBounds(fisher.graphHelper.getFishRectangle());
+        f1.setBounds(graphHelper.getFishRectangle());
         f1.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f1.getRootPane().putClientProperty("Window.alpha", 0.2f);
         f1.setUndecorated(true);
@@ -89,7 +94,7 @@ class ControllerPanel extends JPanel {
         f1.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                fisher.graphHelper.updateFishRectangle(new Rectangle(f1.getBounds()));
+                graphHelper.updateFishRectangle(new Rectangle(f1.getBounds()));
             }
         });
         return f1;
@@ -100,7 +105,7 @@ class ControllerPanel extends JPanel {
         stopButton.addActionListener(e -> {
             running = false;
             startButton.setEnabled(true);
-            fisher.graphHelper.stop();
+            graphHelper.stop();
         });
         return stopButton;
     }

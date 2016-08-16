@@ -14,13 +14,11 @@ public class Fisher extends JFrame {
     private static final long serialVersionUID = 1L;
     public static Fisher fisher;
 
-    GraphHelper graphHelper;
     public ScanPanel scanPanel = new ScanPanel();
 
     private JLabel fishLabel = new JLabel();
     public Fisher() throws AWTException {
         fisher = this;
-        graphHelper = new GraphHelper();
         init();
     }
 

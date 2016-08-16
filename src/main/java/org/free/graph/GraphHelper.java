@@ -25,8 +25,13 @@ public class GraphHelper {
     private int all, succeed;
     private boolean running = false;
 
-    public GraphHelper() throws AWTException {
-        robot = new Robot();
+    public GraphHelper() {
+        try {
+            robot = new Robot();
+        } catch (AWTException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension dim = toolkit.getScreenSize();
         fishRectangle = new Rectangle(500, 100, dim.width - 1000, 120);
@@ -48,7 +53,7 @@ public class GraphHelper {
         running = false;
     }
 
-    public void run() throws Exception {
+    public void scan() throws Exception {
         long start = new Date().getTime();
         Thread.sleep(2000);
         try {
@@ -79,18 +84,18 @@ public class GraphHelper {
 
     private boolean loopPot() throws InterruptedException, IOException {
         Thread.sleep(Conf.scanInterval);
-        boolean finish = true;
+        boolean isContinue = true;
         if (!running) {
-            finish = false;
+            isContinue = false;
         }
 
         if (checkFloat(robot.createScreenCapture(fisherPotRectangle))) {
             Thread.sleep(500);
             MyAction.rightClick(fisherPotRectangle.x + 25, fisherPotRectangle.y + 25);
             succeed++;
-            finish = false;
+            isContinue = false;
         }
-        return finish;
+        return isContinue;
     }
 
     private Rectangle getScreenPotRectangle(Rectangle rect) {
