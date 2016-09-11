@@ -51,7 +51,7 @@ public class PotHelper {
     }
 
     private boolean checkRed(int r, int g, int b) {
-        return r > Conf.MIN_RED && r > g + b;
+        return r > Conf.EDITABLE_CONF.getMinRed() && r > g + b;
     }
 
     private boolean checkRed(int x, int y) {

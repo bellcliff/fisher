@@ -39,7 +39,7 @@ public class Fisher extends JFrame {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
-        add(new ControllerPanel(this), c);
+        add(new ControllerPanel(), c);
 
         c.gridy = 1;
         c.weightx = 1.0;

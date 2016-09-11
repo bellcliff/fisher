@@ -71,7 +71,7 @@ public class Buffer {
     static class Special extends Buffer {
 
         private Special() {
-            super(KeyEvent.VK_G, 3000 + 10 * 60 * 1000);
+            super(KeyEvent.VK_F, 3000 + 2 * 60 * 1000);
         }
     }
 }

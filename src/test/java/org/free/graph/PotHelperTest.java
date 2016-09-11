@@ -14,25 +14,9 @@ import static junit.framework.Assert.assertEquals;
  * Created by byang1 on 8/4/16.
  */
 public class PotHelperTest {
-    private BufferedImage blueImage, redImage;
-
-    BufferedImage getImage(String name) throws IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        return ImageIO.read(new File(classLoader.getResource(name + ".png").getFile()));
-    }
 
     @org.junit.Before
     public void setUp() throws Exception {
-        redImage = getImage("R");
-    }
-
-    @org.junit.Test
-    public void getRedPoint() throws Exception {
-        try {
-            new PotHelper(redImage).getPotRectangle().getX();
-        } catch (IOException ex){
-
-        }
     }
 //
 //    @org.junit.Test

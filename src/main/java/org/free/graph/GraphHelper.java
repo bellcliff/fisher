@@ -11,9 +11,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.nio.file.Path;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
 
@@ -91,7 +94,7 @@ public class GraphHelper {
 
         if (checkFloat(robot.createScreenCapture(fisherPotRectangle))) {
             Thread.sleep(500);
-            MyAction.rightClick(fisherPotRectangle.x + 25, fisherPotRectangle.y + 25);
+            MyAction.rightClick(fisherPotRectangle.x + 25, fisherPotRectangle.y);
             succeed++;
             isContinue = false;
         }
@@ -127,12 +130,16 @@ public class GraphHelper {
         return c.getRed() + c.getBlue() + c.getGreen();
     }
 
+    private String getDateFormatString(String dateFormat) {
+        DateFormat df = new SimpleDateFormat(dateFormat);
+        return df.format(Calendar.getInstance().getTime());
+    }
+
     private void saveImage(BufferedImage image) throws IOException {
-        File imageFolder = new File(System.getProperty("user.home") + "/fisher");
-        if (!imageFolder.exists() && !imageFolder.mkdirs()) throw new IOException("fail create image folder" + imageFolder);
-        LocalDateTime date = LocalDateTime.now();
-        String fileName = date.format(DateTimeFormatter.ISO_LOCAL_TIME).replace(':', '-') + ".png";
-        File imgFile = new File(imageFolder, fileName);
+        File imageFolder = new File(System.getProperty("user.home") + "/fisher/" + getDateFormatString("MMdd"));
+        if (!imageFolder.exists() && !imageFolder.mkdirs())
+            throw new IOException("fail create image folder" + imageFolder);
+        File imgFile = new File(imageFolder, getDateFormatString("HH-mm-ss") + ".png");
         System.out.println(imgFile.getAbsolutePath());
         ImageIO.write(image, "PNG", imgFile);
     }

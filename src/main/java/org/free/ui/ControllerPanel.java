@@ -1,5 +1,7 @@
 package org.free.ui;
 
+import net.java.dev.designgridlayout.DesignGridLayout;
+import net.java.dev.designgridlayout.IRow;
 import org.free.MyAction;
 import org.free.buffer.Buffer;
 import org.free.config.Conf;
@@ -15,33 +17,34 @@ import java.awt.event.WindowEvent;
 
 class ControllerPanel extends JPanel {
 
-    private final Fisher fisher;
     private boolean running = false;
 
-    private final JButton startButton = new JButton("start");
+    private final JButton startButton = new JButton("开始");
+    private final JButton posButton = new JButton("位置");
+    private final JButton stopButton = new JButton("停止");
+    private final JTextField redEdit = new JTextField(""+Conf.MIN_RED);
+    private final JTextField lightEdit = new JTextField(""+Conf.scanLight);
+    private final DesignGridLayout layout;
 
-    ControllerPanel(Fisher fisher) {
-        this.fisher = fisher;
+    private int fail = 0;
+    private GraphHelper graphHelper;
 
+    ControllerPanel() {
+        layout = new DesignGridLayout(this);
         graphHelper = new GraphHelper();
         init();
     }
 
     private void init() {
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "控制台"));
-        setLayout(new GridLayout(2,2));
-        setPreferredSize(new Dimension(240, 160));
-
-        add(getStartButton());
-        add(getPositionButton());
-        add(getStopButton());
-        add(getLightText());
+        initEdit();
+        initAction();
+        layout.row().grid().add(startButton).add(posButton).add(stopButton);
+        layout.row().grid(new JLabel("亮度")).add(lightEdit).grid(new JLabel("红色")).add(redEdit);
     }
 
-    private int fail = 0;
-    private GraphHelper graphHelper;
+    private void initAction() {
 
-    private JButton getStartButton() {
         startButton.addActionListener(e -> {
             running = true;
             startButton.setEnabled(false);
@@ -54,7 +57,11 @@ class ControllerPanel extends JPanel {
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
                     }
-                    final Buffer.BufferManagement buffer = new Buffer.BufferManagement(Buffer.FishBuffer.Bait, Buffer.FishBuffer.Knife, Buffer.FishBuffer.Special);
+                    final Buffer.BufferManagement buffer = new Buffer.BufferManagement(
+                            Buffer.FishBuffer.Bait,
+//                            Buffer.FishBuffer.Knife,
+                            Buffer.FishBuffer.Special
+                    );
                     while (true) {
                         buffer.check();
                         MyAction.keyPress();
@@ -72,19 +79,20 @@ class ControllerPanel extends JPanel {
                 }
             }.start();
         });
-        return startButton;
-    }
 
-    private JButton getPositionButton() {
-        final JButton positionButton = new JButton("position");
         final JFrame f1 = getJFrame();
-        positionButton.addActionListener(e -> {
+        posButton.addActionListener(e -> {
             f1.setVisible(!f1.isVisible());
         });
-        return positionButton;
+
+        stopButton.addActionListener(e -> {
+            running = false;
+            startButton.setEnabled(true);
+            graphHelper.stop();
+        });
     }
 
-    private JFrame getJFrame(){
+    private JFrame getJFrame() {
         JFrame f1 = new JFrame();
         f1.setBounds(graphHelper.getFishRectangle());
         f1.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -100,18 +108,8 @@ class ControllerPanel extends JPanel {
         return f1;
     }
 
-    private JButton getStopButton() {
-        final JButton stopButton = new JButton("stop");
-        stopButton.addActionListener(e -> {
-            running = false;
-            startButton.setEnabled(true);
-            graphHelper.stop();
-        });
-        return stopButton;
-    }
 
-    private JTextField getLightText() {
-        final JTextField lightEdit = new JTextField(""+Conf.scanLight);
+    private void initEdit() {
         lightEdit.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -136,6 +134,29 @@ class ControllerPanel extends JPanel {
                 Conf.EDITABLE_CONF.updateScanLight(light);
             }
         });
-        return lightEdit;
+
+        redEdit.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+
+            void update() {
+                if (redEdit.getText().isEmpty()) {
+                    return;
+                }
+                Conf.EDITABLE_CONF.setMinRed(Integer.parseInt(redEdit.getText()));
+            }
+        });
     }
 }

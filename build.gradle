@@ -25,6 +25,7 @@ targetCompatibility = 1.8
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:1.4.0.RELEASE")
+    compile group: 'net.java.dev.designgridlayout', name: 'designgridlayout', version: '1.9'
     testCompile 'junit:junit:4.10'
 }
 
