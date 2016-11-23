@@ -37,7 +37,7 @@ public class GraphHelper {
         }
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension dim = toolkit.getScreenSize();
-        fishRectangle = new Rectangle(500, 100, dim.width - 1000, 120);
+        fishRectangle = new Rectangle(500, 300, dim.width - 1000, 120);
     }
 
     public void start() {

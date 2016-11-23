@@ -24,7 +24,7 @@ public class MyAction {
         Thread.sleep(50);
         robot.mouseRelease(InputEvent.BUTTON1_MASK);
         Thread.sleep(500);
-        robot.mouseMove(x, 10);
+        robot.mouseMove(x, 30);
     }
 
     public static void keyPress() {

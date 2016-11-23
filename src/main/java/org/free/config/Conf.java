@@ -3,11 +3,11 @@ package org.free.config;
 public interface Conf {
 	int interval = 22;
 
-	int scanLeft = -25;
+	int scanLeft = -15;
 	int scanTop = 0;
-	int scanWidth = 80;
-	int scanHeight = 40;
-	int scanLight = 10;
+	int scanWidth = 50;
+	int scanHeight = 30;
+	int scanLight = 20;
 	int scanInterval = 100;
 	int scanRange = 5;
 

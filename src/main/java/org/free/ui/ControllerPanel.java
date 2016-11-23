@@ -96,7 +96,7 @@ class ControllerPanel extends JPanel {
         JFrame f1 = new JFrame();
         f1.setBounds(graphHelper.getFishRectangle());
         f1.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f1.getRootPane().putClientProperty("Window.alpha", 0.2f);
+        f1.getRootPane().putClientProperty("Window.alpha", 0.05f);
         f1.setUndecorated(true);
         f1.setAlwaysOnTop(true);
         f1.addWindowListener(new WindowAdapter() {
