@@ -48,7 +48,7 @@ public class Fisher extends JFrame {
         c.gridy = 2;
         JPanel fishPanel = new JPanel();
         fishPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "扫描"));
-        fishPanel.setPreferredSize(new Dimension(240, 120));
+        fishPanel.setPreferredSize(new Dimension(220, 120));
         fishPanel.add(fishLabel);
         add(fishPanel, c);
     }

@@ -9,7 +9,11 @@ public interface Conf {
 	int scanHeight = 30;
 	int scanLight = 20;
 	int scanInterval = 100;
-	int scanRange = 5;
+	int scanRange = 3;
+
+	int screenTop = 400;
+	int screenWidth = 400;
+	int screenHeight = 120;
 
 	int MIN_RED = 50;
 	EditableConf EDITABLE_CONF = new EditableConf();

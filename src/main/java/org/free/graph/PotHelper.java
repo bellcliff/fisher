@@ -3,11 +3,13 @@ package org.free.graph;
 import org.free.config.Conf;
 import org.free.ui.Fisher;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -47,7 +49,8 @@ public class PotHelper {
             Fisher.fisher.scanPanel.updateRGB(rgb[0], rgb[1], rgb[2]);
             return option.get().getKey();
         }
-        throw new IOException();
+        option = rgbSet.stream().max((o1, o2)-> o1.getValue()[0] - o2.getValue()[0]);
+        throw new IOException("max red" + option.get().getValue()[0]);
     }
 
     private boolean checkRed(int r, int g, int b) {
@@ -99,5 +102,11 @@ public class PotHelper {
 //    BufferedImage getPotImage(PotType potType) throws IOException {
 //        Rectangle redRectangle = getPotRectangle(potType);
 //        return image.getSubimage(redRectangle.x, redRectangle.y, redRectangle.width, redRectangle.height);
+//    }
+//
+//    public static void main(String... argv) throws IOException {
+//
+//        PotHelper ph = new PotHelper(ImageIO.read(new File("/Users/yangbo/fisher/0101/03-12-23.png")));
+//        System.out.println(ph.getRedPoint());
 //    }
 }

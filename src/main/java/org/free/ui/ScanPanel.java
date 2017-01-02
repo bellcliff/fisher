@@ -1,5 +1,8 @@
 package org.free.ui;
 
+import net.java.dev.designgridlayout.DesignGridLayout;
+import net.java.dev.designgridlayout.IRowCreator;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -27,45 +30,38 @@ public class ScanPanel extends JPanel {
     }
 
     private void init() {
+        DesignGridLayout layout = new DesignGridLayout(this);
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "扫描"));
         setLayout(new GridLayout(3, 1));
-        setPreferredSize(new Dimension(240, 120));
+        setPreferredSize(new Dimension(220, 120));
 
-        fishAllLabel = new JLabel();
-        fishSuccLabel = new JLabel();
-        lightBaseLabel = new JLabel();
-        lightHighLabel = new JLabel();
+        fishAllLabel = new JLabel("A");
+        fishSuccLabel = new JLabel("S");
+        lightBaseLabel = new JLabel("B");
+        lightHighLabel = new JLabel("H");
 
-        redLabel = new JLabel();
-        greenLabel = new JLabel();
-        blueLabel = new JLabel();
+        redLabel = new JLabel("R");
+        greenLabel = new JLabel("G");
+        blueLabel = new JLabel("B");
 
         scanImgLabel = new JLabel();
         potImgLabel = new JLabel();
 
-        JPanel fishPanel = new JPanel(new GridLayout(1, 4));
-        fishPanel.add(fishAllLabel);
-        fishPanel.add(new JSeparator(SwingConstants.VERTICAL));
-        fishPanel.add(fishSuccLabel);
-        fishPanel.add(new JSeparator(SwingConstants.VERTICAL));
-        fishPanel.add(lightHighLabel);
-        fishPanel.add(new JSeparator(SwingConstants.VERTICAL));
-        fishPanel.add(lightBaseLabel);
-        add(fishPanel);
 
-        JPanel rgbPanel = new JPanel(new GridLayout(1, 3));
-        rgbPanel.add(redLabel);
-        rgbPanel.add(new JSeparator(SwingConstants.VERTICAL));
-        rgbPanel.add(greenLabel);
-        rgbPanel.add(new JSeparator(SwingConstants.VERTICAL));
-        rgbPanel.add(blueLabel);
-        add(rgbPanel);
+        IRowCreator row = layout.row();
+        row.grid().add(fishAllLabel);
+        row.grid().add(fishSuccLabel);
+        row.grid().add(lightHighLabel);
+//        row.grid().add(lightBaseLabel);
 
-        JPanel imgPanel = new JPanel(new GridLayout(1, 2));
-        imgPanel.add(scanImgLabel);
-        rgbPanel.add(new JSeparator(SwingConstants.VERTICAL));
-        imgPanel.add(potImgLabel);
-        add(imgPanel);
+        row = layout.row();
+        row.grid().add(redLabel);
+        row.grid().add(greenLabel);
+        row.grid().add(blueLabel);
+
+        row = layout.row();
+        row.grid().add(scanImgLabel);
+        row.grid().add(potImgLabel);
     }
 
     private void updateImage(BufferedImage bufferedImage, int type) {
