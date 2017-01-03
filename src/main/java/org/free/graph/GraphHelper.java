@@ -79,6 +79,7 @@ public class GraphHelper {
         PotHelper ph = new PotHelper(img);
         Rectangle potRect;
         try {
+            ph.updateRedMaxValue();
             potRect = ph.getPotRectangle();
             updatePotLight(img, potRect);
             fisherPotRectangle = getScreenPotRectangle(potRect);

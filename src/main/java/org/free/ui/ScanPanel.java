@@ -13,15 +13,8 @@ import java.awt.image.BufferedImage;
 public class ScanPanel extends JPanel {
 
     private JLabel fishAllLabel;
-    private JLabel fishSuccLabel;
-
     private JLabel lightHighLabel;
-    private JLabel lightBaseLabel;
-
     private JLabel redLabel;
-    private JLabel greenLabel;
-    private JLabel blueLabel;
-
     private JLabel scanImgLabel;
     private JLabel potImgLabel;
 
@@ -35,14 +28,9 @@ public class ScanPanel extends JPanel {
         setLayout(new GridLayout(3, 1));
         setPreferredSize(new Dimension(220, 120));
 
-        fishAllLabel = new JLabel("A");
-        fishSuccLabel = new JLabel("S");
-        lightBaseLabel = new JLabel("B");
-        lightHighLabel = new JLabel("H");
-
-        redLabel = new JLabel("R");
-        greenLabel = new JLabel("G");
-        blueLabel = new JLabel("B");
+        fishAllLabel = new JLabel("A|S");
+        redLabel = new JLabel("R|G|B");
+        lightHighLabel = new JLabel("H|D");
 
         scanImgLabel = new JLabel();
         potImgLabel = new JLabel();
@@ -50,18 +38,12 @@ public class ScanPanel extends JPanel {
 
         IRowCreator row = layout.row();
         row.grid().add(fishAllLabel);
-        row.grid().add(fishSuccLabel);
         row.grid().add(lightHighLabel);
-//        row.grid().add(lightBaseLabel);
-
-        row = layout.row();
-        row.grid().add(redLabel);
-        row.grid().add(greenLabel);
-        row.grid().add(blueLabel);
-
         row = layout.row();
         row.grid().add(scanImgLabel);
         row.grid().add(potImgLabel);
+        row = layout.row();
+        row.grid().add(redLabel);
     }
 
     private void updateImage(BufferedImage bufferedImage, int type) {
@@ -77,15 +59,12 @@ public class ScanPanel extends JPanel {
     }
 
     public void updatePot(int light, int base, BufferedImage pot) {
-        lightHighLabel.setText("" + light);
-        lightBaseLabel.setText("" + base);
+        lightHighLabel.setText(light + "|" + (light - base));
         updateImage(pot, 1);
     }
 
     public void updateRGB(int r, int g, int b) {
-        redLabel.setText("R:" + r);
-        greenLabel.setText("G:" + g);
-        blueLabel.setText("B:" + b);
+        redLabel.setText(r + "|" + g + "|" + b);
         SwingUtilities.invokeLater(() -> {
             validate();
             repaint();
@@ -96,9 +75,8 @@ public class ScanPanel extends JPanel {
         updateImage(pot, 0);
     }
 
-    public void updateFish(int all, int succ) {
-        fishSuccLabel.setText("" + succ);
-        fishAllLabel.setText("" + all);
+    public void updateFish(int all, int success) {
+        fishAllLabel.setText(all + "|" + success);
         SwingUtilities.invokeLater(() -> {
             validate();
             repaint();

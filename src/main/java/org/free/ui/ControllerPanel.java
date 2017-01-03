@@ -22,7 +22,7 @@ class ControllerPanel extends JPanel {
     private final JButton startButton = new JButton("开始");
     private final JButton posButton = new JButton("位置");
     private final JButton stopButton = new JButton("停止");
-    private final JTextField redEdit = new JTextField(""+Conf.MIN_RED);
+    private final JTextField redEdit = new JTextField(""+Conf.RED_THRESHOLD);
     private final JTextField lightEdit = new JTextField(""+Conf.scanLight);
     private final DesignGridLayout layout;
 
@@ -155,7 +155,7 @@ class ControllerPanel extends JPanel {
                 if (redEdit.getText().isEmpty()) {
                     return;
                 }
-                Conf.EDITABLE_CONF.setMinRed(Integer.parseInt(redEdit.getText()));
+                Conf.EDITABLE_CONF.setRedThreshold(Integer.parseInt(redEdit.getText()));
             }
         });
     }

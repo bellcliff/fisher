@@ -21,10 +21,6 @@ public class PotHelper {
     private final Map<Point, Integer[]> rgbMap;
     private final Set<Map.Entry<Point, Integer[]>> rgbSet;
 
-    enum PotType {
-        RED, BLUE
-    }
-
     PotHelper(BufferedImage image) {
         this.image = image;
         Raster raster = image.getRaster();
@@ -50,7 +46,17 @@ public class PotHelper {
             return option.get().getKey();
         }
         option = rgbSet.stream().max((o1, o2)-> o1.getValue()[0] - o2.getValue()[0]);
-        throw new IOException("max red" + option.get().getValue()[0]);
+        throw new IOException("max red" + option.get().getValue()[0] +"-"+ option.get().getKey());
+    }
+
+    public void updateRedMaxValue() throws IOException {
+        Optional<Integer[]> option = rgbMap.values().stream()
+                .max((o1, o2) -> o1[0] - o2[0]);
+        if (option.isPresent()) {
+            Conf.EDITABLE_CONF.setMinRed(option.get()[0] - Conf.EDITABLE_CONF.getRedThreshold());
+            System.out.println("update min red" + Conf.EDITABLE_CONF.getMinRed());
+        }else
+            throw new IOException("can't found max red");
     }
 
     private boolean checkRed(int r, int g, int b) {
@@ -58,18 +64,20 @@ public class PotHelper {
     }
 
     private boolean checkRed(int x, int y) {
-        return x >= 0 && y >= 0 && x < image.getWidth() && y < image.getHeight() && rgbMap.containsKey(new Point(x, y));
+        return x >= 0 && y >= 0
+                && x < image.getWidth()
+                && y < image.getHeight()
+                && rgbMap.containsKey(new Point(x, y));
     }
 
     private boolean checkRed(Point point) {
         int x = point.x, y = point.y;
-
-        if (!checkRed(x, y)) return false;
-        for (int dep = 1; dep < Conf.scanRange; dep++){
-            if (!checkRed(x - dep , y) || ! checkRed(x+dep, y) || !checkRed(x, y-dep)||!checkRed(x, y+dep))
-                return false;
-        }
-        return true;
+        int dep = Conf.scanRange;
+        return checkRed(x, y)
+            && checkRed(x - dep , y)
+                && checkRed(x+dep, y)
+                && checkRed(x, y-dep)
+                && checkRed(x, y+dep);
     }
 
     Rectangle getPotRectangle() throws IOException {

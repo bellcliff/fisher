@@ -16,5 +16,6 @@ public interface Conf {
 	int screenHeight = 120;
 
 	int MIN_RED = 50;
+	int RED_THRESHOLD = 30;
 	EditableConf EDITABLE_CONF = new EditableConf();
 }
