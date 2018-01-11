@@ -61,5 +61,9 @@ public class Fisher extends JFrame {
         validate();
         pack();
         repaint();
+        Object o;
     }
+
+    // int, char, boolean, [], float, short, double, long, class
+    // Object,
 }

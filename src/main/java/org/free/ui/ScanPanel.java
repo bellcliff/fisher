@@ -25,8 +25,6 @@ public class ScanPanel extends JPanel {
     private void init() {
         DesignGridLayout layout = new DesignGridLayout(this);
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "扫描"));
-        setLayout(new GridLayout(3, 1));
-        setPreferredSize(new Dimension(220, 120));
 
         fishAllLabel = new JLabel("A|S");
         redLabel = new JLabel("R|G|B");
@@ -36,14 +34,8 @@ public class ScanPanel extends JPanel {
         potImgLabel = new JLabel();
 
 
-        IRowCreator row = layout.row();
-        row.grid().add(fishAllLabel);
-        row.grid().add(lightHighLabel);
-        row = layout.row();
-        row.grid().add(scanImgLabel);
-        row.grid().add(potImgLabel);
-        row = layout.row();
-        row.grid().add(redLabel);
+        layout.row().grid().add(fishAllLabel).add(lightHighLabel).add(redLabel);
+        layout.row().grid().add(scanImgLabel).add(potImgLabel);
     }
 
     private void updateImage(BufferedImage bufferedImage, int type) {

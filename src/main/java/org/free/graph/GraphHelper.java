@@ -9,16 +9,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Formatter;
 
 public class GraphHelper {
     private Rectangle fishRectangle;
@@ -79,7 +73,6 @@ public class GraphHelper {
         PotHelper ph = new PotHelper(img);
         Rectangle potRect;
         try {
-            ph.updateRedMaxValue();
             potRect = ph.getPotRectangle();
             updatePotLight(img, potRect);
             fisherPotRectangle = getScreenPotRectangle(potRect);

@@ -2,6 +2,7 @@ package org.free.ui;
 
 import net.java.dev.designgridlayout.DesignGridLayout;
 import net.java.dev.designgridlayout.IRow;
+import net.java.dev.designgridlayout.IRowCreator;
 import org.free.MyAction;
 import org.free.buffer.Buffer;
 import org.free.config.Conf;
@@ -22,7 +23,6 @@ class ControllerPanel extends JPanel {
     private final JButton startButton = new JButton("开始");
     private final JButton posButton = new JButton("位置");
     private final JButton stopButton = new JButton("停止");
-    private final JTextField redEdit = new JTextField(""+Conf.RED_THRESHOLD);
     private final JTextField lightEdit = new JTextField(""+Conf.scanLight);
     private final DesignGridLayout layout;
 
@@ -39,8 +39,8 @@ class ControllerPanel extends JPanel {
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "控制台"));
         initEdit();
         initAction();
-        layout.row().grid().add(startButton).add(posButton).add(stopButton);
-        layout.row().grid(new JLabel("亮度")).add(lightEdit).grid(new JLabel("红色")).add(redEdit);
+        layout.row().grid().add(startButton).add(stopButton);
+        layout.row().grid(new JLabel("亮度")).add(lightEdit).add(posButton);
     }
 
     private void initAction() {
@@ -59,7 +59,7 @@ class ControllerPanel extends JPanel {
                     }
                     final Buffer.BufferManagement buffer = new Buffer.BufferManagement(
                             Buffer.FishBuffer.Bait,
-//                            Buffer.FishBuffer.Knife,
+                            Buffer.FishBuffer.Knife,
                             Buffer.FishBuffer.Special
                     );
                     while (true) {
@@ -132,30 +132,6 @@ class ControllerPanel extends JPanel {
                 }
                 int light = Integer.parseInt(lightEdit.getText());
                 Conf.EDITABLE_CONF.updateScanLight(light);
-            }
-        });
-
-        redEdit.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                update();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                update();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                update();
-            }
-
-            void update() {
-                if (redEdit.getText().isEmpty()) {
-                    return;
-                }
-                Conf.EDITABLE_CONF.setRedThreshold(Integer.parseInt(redEdit.getText()));
             }
         });
     }
