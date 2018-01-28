@@ -8,7 +8,7 @@ public interface Conf {
 	int scanWidth = 50;
 	int scanHeight = 30;
 	int scanLight = 20;
-	int scanInterval = 100;
+	int scanInterval = 20;
 	int scanRange = 3;
 
 	int screenTop = 400;
