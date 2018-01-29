@@ -126,7 +126,8 @@ public class GraphHelper {
     private boolean checkFloat(BufferedImage img) throws IOException {
         int light = getRectangleLight(img, new Rectangle(img.getWidth(), img.getHeight()));
         Fisher.fisher.scanPanel.updatePot(light, baseLight, img);
-        return light >= baseLight + Conf.EDITABLE_CONF.getScanLight();
+        if (baseLight > light) baseLight = light;
+        return light >= baseLight + Conf.EDITABLE_CONF.getScanLight(); 
     }
 
     private int getRGB(BufferedImage img, int x, int y) {
