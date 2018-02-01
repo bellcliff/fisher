@@ -32,7 +32,7 @@ public class ScanPanel extends JPanel {
     private void init() {
         DesignGridLayout layout = new DesignGridLayout(this);
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "扫描"));
-        setLayout(new GridLayout(3, 1));
+        setLayout(new GridLayout(2, 1));
         setPreferredSize(new Dimension(220, 120));
 
         fishAllLabel = new JLabel("A");
@@ -51,13 +51,15 @@ public class ScanPanel extends JPanel {
         IRowCreator row = layout.row();
         row.grid().add(fishAllLabel);
         row.grid().add(fishSuccLabel);
+
+        row = layout.row();
         row.grid().add(lightHighLabel);
-//        row.grid().add(lightBaseLabel);
+        row.grid().add(lightBaseLabel);
 
         row = layout.row();
         row.grid().add(redLabel);
-        row.grid().add(greenLabel);
-        row.grid().add(blueLabel);
+        // row.grid().add(greenLabel);
+        // row.grid().add(blueLabel);
 
         row = layout.row();
         row.grid().add(scanImgLabel);
