@@ -62,7 +62,6 @@ public class GraphHelper {
 
     public void scan() throws Exception {
         long start = new Date().getTime();
-        Thread.sleep(2000);
         try {
             initPot();
             while (new Date().getTime() - start < Conf.interval * 1000) {

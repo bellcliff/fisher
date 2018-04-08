@@ -1,7 +1,7 @@
 package org.free.config;
 
 public interface Conf {
-	int interval = 22;
+	int interval = 17;
 
 	int scanLeft = -15;
 	int scanTop = 0;

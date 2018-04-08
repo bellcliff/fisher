@@ -59,13 +59,14 @@ class ControllerPanel extends JPanel {
                     }
                     final Buffer.BufferManagement buffer = new Buffer.BufferManagement(
                             Buffer.FishBuffer.Bait,
-//                            Buffer.FishBuffer.Knife,
+                            Buffer.FishBuffer.Knife,
                             Buffer.FishBuffer.Special
                     );
                     while (true) {
-                        buffer.check();
-                        MyAction.keyPress();
                         try {
+                            buffer.check();
+                            MyAction.keyPress();
+                            sleep(4000);
                             graphHelper.scan();
                             fail = 0;
                         } catch (Exception e) {
